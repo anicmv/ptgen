@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties("douban")
 public class DouBanConfig {
-    private String searchApi;
     private String detailApi;
     private String apikey;
     private String accessToken;

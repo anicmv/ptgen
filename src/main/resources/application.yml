@@ -16,7 +16,6 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 douban:
-  searchApi: api
   detailApi: api
   apikey: api_key
   accessToken: your_token
