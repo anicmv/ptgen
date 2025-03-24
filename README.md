@@ -1,6 +1,6 @@
 # PT Gen
 
-一个Java语言编写的PT Gen信息生成程序.
+一款Java语言编写的PT Gen信息生成程序。
 
 ## 运行环境
 
