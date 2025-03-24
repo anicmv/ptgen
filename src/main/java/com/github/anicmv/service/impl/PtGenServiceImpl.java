@@ -173,8 +173,8 @@ public class PtGenServiceImpl implements PtGenService {
      * @param douBanId 豆瓣id
      */
     private DouBanPage getPageObj(String douBanId) {
-        String douBanLink = DouBanConstant.D_LINK + douBanId + "/";
-        String pageRaw = HttpUtil.get(douBanLink, Map.of("Cookie", config.getCookie(), "User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"));
+        String douBanLink = DouBanConstant.D_LINK + douBanId + DouBanConstant.S;
+        String pageRaw = HttpUtil.get(douBanLink, Map.of(DouBanConstant.COOKIE, config.getCookie(), DouBanConstant.UA, DouBanConstant.USER_AGENT));
 
         if (checkPageError(pageRaw)) {
             return null;
@@ -190,8 +190,8 @@ public class PtGenServiceImpl implements PtGenService {
      * @param type     movie or tv
      */
     private DouBanDetail getMovieDetail(String douBanId, String type) {
-        String api = config.getDetailApi() + type + "/" + douBanId + "?apiKey=" + config.getApikey();
-        String result = HttpUtil.get(api, Map.of("User-Agent", config.getUserAgent(), "Referer", config.getReferer()));
+        String api = config.getDetailApi() + type + DouBanConstant.S + douBanId + DouBanConstant.API_KEY + config.getApikey();
+        String result = HttpUtil.get(api, Map.of(DouBanConstant.UA, config.getUserAgent(), DouBanConstant.REFERER, config.getReferer()));
         if (result == null) {
             return null;
         }
@@ -220,8 +220,8 @@ public class PtGenServiceImpl implements PtGenService {
      * @param douBanId 豆瓣id
      */
     private Map<String, List<String>> getAwards(String douBanId) {
-        String awardsPageUrl = DouBanConstant.D_LINK + douBanId + "/awards/";
-        String awardsPage = HttpUtil.get(awardsPageUrl, Map.of("Cookie", config.getCookie()));
+        String awardsPageUrl = DouBanConstant.D_LINK + douBanId + DouBanConstant.AWARDS;
+        String awardsPage = HttpUtil.get(awardsPageUrl, Map.of(DouBanConstant.COOKIE, config.getCookie()));
         if (awardsPage == null) {
             return null;
         }

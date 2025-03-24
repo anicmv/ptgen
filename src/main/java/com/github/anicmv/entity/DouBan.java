@@ -68,8 +68,6 @@ public class DouBan {
     private String intro;
     // 获奖情况
     private String awards;
-    // json数据
-    private String info;
     // 创建时间
     private LocalDateTime createTime;
     // 更新时间
