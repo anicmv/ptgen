@@ -1,0 +1,11 @@
+version: "3.8"
+#  docker compose up --build -d
+services:
+  ptgen:
+    build: .
+    image: ptgen
+    container_name: ptgen
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./log:/app/log/
