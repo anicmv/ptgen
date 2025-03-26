@@ -112,9 +112,10 @@ public class DouBan {
         if (ObjectUtil.isNotEmpty(douBanScore)) {
             //◎豆瓣评分　7.6/10 from 338581 users
             ptGen.append("◎豆瓣评分　").append(douBanScore);
-            if (douBanPeople != null) {
-                ptGen.append(" from ").append(douBanPeople).append(" users").append("\n");
+            if (douBanPeople != null && douBanScore.compareTo(BigDecimal.ZERO) > 0) {
+                ptGen.append(" from ").append(douBanPeople).append(" users");
             }
+            ptGen.append("\n");
         }
         ptGen.append("◎豆瓣链接　").append(DouBanConstant.D_LINK).append(id).append("/").append("\n");
         if (StrUtil.isNotEmpty(season)) {
