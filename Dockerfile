@@ -24,6 +24,8 @@ FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
+RUN mkdir -p /app/log
+
 COPY ./ptgen.jar .
 
 EXPOSE 8081

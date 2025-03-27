@@ -15,13 +15,16 @@
 - MySQL
 
 ## 特点
-- 基于 Key 的分布式细粒度锁： 采用 ConcurrentHashMap 和 ReentrantLock 实现，该机制确保对于同一豆瓣 ID 的抓取操作仅在首次请求时执行，后续 30 天内均可复用数据；到期后再更新存量数据。
+
+- 基于 Key 的分布式细粒度锁： 采用 ConcurrentHashMap 和 ReentrantLock 实现，该机制确保对于同一豆瓣 ID 的抓取操作仅在首次请求时执行，后续
+  30 天内均可复用数据；到期后再更新存量数据。
 - 降低豆瓣风控风险： 利用 MySQL 中存量数据一键生成 PT Gen 信息，有效减少直接抓取豆瓣页面的频率，从而降低风控触发的可能性。
 - Token 认证： 利用 Spring Security 精细管理接口访问权限，确保安全可靠的接口访问控制。
 
 ## 开始使用
 
 ### PT Gen信息生成接口
+
 接口地址: `GET /ptgen?url={豆瓣url或者id}`   
 接口描述: 返回PT Gen字符串  
 **请求头 (Headers)**
@@ -29,7 +32,6 @@
 | 参数            | 必须 | 示例                  | 说明       |
 |---------------|----|---------------------|----------|
 | Authorization | 是  | Bearer <Your_Token> | Token 授权 |
-
 
 **示例请求**
 
@@ -70,7 +72,9 @@ GET /ptgen?url={豆瓣url或者id}
 　　自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化。然而，被称作是人类最弱兵器的程肖宇，在一次双重地下城的突击任务中得到了只有自己能够「升级」的能力，得以在战斗中不断变强。顺利通过转职任务，得到能操纵暗影士兵的职业「暗影君主」的肖宇，为了取得或许能医治母亲病情的道具「生命神水」的素材，而投身于新的战斗之中。
 
 ```
+
 ### 豆瓣详情信息接口
+
 接口地址: `GET /detail?url={豆瓣url或者id}`   
 接口描述: 返回PT Gen字符串  
 **请求头 (Headers)**
@@ -78,7 +82,6 @@ GET /ptgen?url={豆瓣url或者id}
 | 参数            | 必须 | 示例                  | 说明       |
 |---------------|----|---------------------|----------|
 | Authorization | 是  | Bearer <Your_Token> | Token 授权 |
-
 
 **示例请求**
 
@@ -91,7 +94,7 @@ GET /detail?url={豆瓣url或者id}
 ```
 {
     "douBan": {
-        "id": "36837352",
+        "id": 36837352,
         "title": "我独自升级 第二季 -起于暗影-",
         "type": "TVSeries",
         "originalTitle": "俺だけレベルアップな件 Season 2 -Arise from the Shadow-",
@@ -570,6 +573,7 @@ GET /detail?url={豆瓣url或者id}
 ```
 
 ### 直接从存量数据库生成PT Gen信息
+
 接口地址: `GET /old?url={豆瓣url或者id}`   
 接口描述: 返回PT Gen字符串  
 **请求头 (Headers)**
@@ -577,7 +581,6 @@ GET /detail?url={豆瓣url或者id}
 | 参数            | 必须 | 示例                  | 说明       |
 |---------------|----|---------------------|----------|
 | Authorization | 是  | Bearer <Your_Token> | Token 授权 |
-
 
 **示例请求**
 
@@ -619,5 +622,117 @@ GET /old?url={豆瓣url或者id}
 
 ```
 
+### PT Gen数据保存
+
+接口地址: `POST /save   
+接口描述: 返回PT Gen字符串  
+**请求头 (Headers)**
+
+| 参数            | 必须 | 示例                  | 说明       |
+|---------------|----|---------------------|----------|
+| Authorization | 是  | Bearer <Your_Token> | Token 授权 |
+
+**示例请求**
+
+```
+POST /save
+```
+
+**请求头 (Headers)**
+
+| 参数            | 必须 | 示例                  | 说明                 |
+|---------------|----|---------------------|--------------------|
+| Content-Type  | 是  | multipart/form-data | 指定表单格式，包含文件在内的表单字段 |
+| Authorization | 是  | Bearer <Your_Token> | Token 授权           |
+
+**请求参数 (Body - raw json)**
+
+```
+{
+    "id": 36837352,
+    "title": "我独自升级 第二季 -起于暗影-",
+    "type": "TVSeries",
+    "originalTitle": "俺だけレベルアップな件 Season 2 -Arise from the Shadow-",
+    "translatedName": "我独自升级 第二季 -起于暗影- / 我独自升级：暗影崛起 / 我独自升级 第二季 -Arise from the Shadow- / 나 혼자만 레벨업 Season 2 / Solo Leveling Season 2 / Solo Leveling: Arise From the Shadow",
+    "year": 2025,
+    "countries": "日本 / 韩国",
+    "officialWebsite": "https://sololeveling-anime.net",
+    "mainPic": "https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2917604260.jpg",
+    "genres": "剧情 / 动作 / 动画 / 奇幻 / 冒险",
+    "languages": "日语",
+    "publishDate": "2025-01-04(日本)",
+    "douBanScore": 8.8,
+    "douBanPeople": "7916",
+    "imdbId": "tt31960864",
+    "episodesCount": 13,
+    "durations": "PT0H24M",
+    "directors": "中重俊祐 Nakashige Shunsuke",
+    "actors": "坂泰斗 Ban Taito\n　　　上田丽奈 Reina Ueda\n　　　平川大辅 Daisuke Hirakawa\n　　　东地宏树 Hiroki Touchi\n　　　银河万丈 Banjô Ginga\n　　　古川慎 Makoto Furukawa\n　　　中村源太 Nakamura Genta\n　　　三川华月 Mikawa Haruna",
+    "dramatist": "秋空 Chugong",
+    "intro": "自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化。然而，被称作是人类最弱兵器的程肖宇，在一次双重地下城的突击任务中得到了只有自己能够「升级」的能力，得以在战斗中不断变强。顺利通过转职任务，得到能操纵暗影士兵的职业「暗影君主」的肖宇，为了取得或许能医治母亲病情的道具「生命神水」的素材，而投身于新的战斗之中。",
+    "awards": "{1}",
+    "createTime": "2025-03-24T14:48:34.77171352",
+    "updateTime": "2025-03-24T14:48:34.771813396"
+}
+```
+
+**成功响应**
+
+```
+{
+    "result": "success",
+    "code": 200,
+    "data": "ok"
+}
+```
+
+### 从存量数据中获取不过期的数据
+
+接口地址: `GET /cache?url={豆瓣url或者id}`   
+接口描述: 返回JSON  
+**请求头 (Headers)**
+
+| 参数            | 必须 | 示例                  | 说明       |
+|---------------|----|---------------------|----------|
+| Authorization | 是  | Bearer <Your_Token> | Token 授权 |
+
+**示例请求**
+
+```
+GET /cache?url={豆瓣url或者id}
+```
+
+**成功响应**   
+缓存未过期
+
+```
+{
+    "result": "success",
+    "code": 200,
+    "data": "[img]https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2917604260.jpg[/img]\n\n◎译　　名　我独自升级 第二季 -起于暗影- / 我独自升级：暗影崛起 / 我独自升级 第二季 -Arise from the Shadow- / 나 혼자만 레벨업 Season 2 / Solo Leveling Season 2 / Solo Leveling: Arise From the Shadow\n◎片　　名　俺だけレベルアップな件 Season 2 -Arise from the Shadow-\n◎年　　代　2025\n◎产　　地　日本 / 韩国\n◎类　　型　剧情 / 动作 / 动画 / 奇幻 / 冒险\n◎官方网站　https://sololeveling-anime.net\n◎语　　言　日语\n◎上映日期　2025-01-04(日本)\n◎豆瓣评分　8.8 from 7916 users\n◎豆瓣链接　https://movie.douban.com/subject/36837352/\n◎集　　数　13\n◎片　　长　24分钟\n◎导　　演　中重俊祐 Nakashige Shunsuke\n◎编　　剧　秋空 Chugong\n◎主　　演　坂泰斗 Ban Taito\n　　　上田丽奈 Reina Ueda\n　　　平川大辅 Daisuke Hirakawa\n　　　东地宏树 Hiroki Touchi\n　　　银河万丈 Banjô Ginga\n　　　古川慎 Makoto Furukawa\n　　　中村源太 Nakamura Genta\n　　　三川华月 Mikawa Haruna\n\n◎简　　介\n\n　　自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化。然而，被称作是人类最弱兵器的程肖宇，在一次双重地下城的突击任务中得到了只有自己能够「升级」的能力，得以在战斗中不断变强。顺利通过转职任务，得到能操纵暗影士兵的职业「暗影君主」的肖宇，为了取得或许能医治母亲病情的道具「生命神水」的素材，而投身于新的战斗之中。\n"
+}
+```
+
+缓存已过期
+
+```
+{
+"result": "success",
+"code": -1,
+"data": "豆瓣: 36837352, expired"
+}
+```
+
+无存量数据
+
+```
+{
+"result": "success",
+"code": -1,
+"data": "豆瓣: 36837352, not exist"
+}
+```
+
 ## 不会搭建?
+
 > 可以到[Telegram群组](https://t.me/+q5wtfnj0kTs4MTRl)来讨论各种问题
