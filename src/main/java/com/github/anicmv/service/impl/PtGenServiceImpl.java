@@ -150,7 +150,7 @@ public class PtGenServiceImpl implements PtGenService {
         if (DouBanUtil.hasPast30Days(douBan.getUpdateTime())) {
             return DouBanUtil.error("豆瓣: " + douBanId + ", expired");
         }
-        return DouBanUtil.success(douBan.buildPtGen());
+        return DouBanUtil.success(JSONUtil.parse(douBan));
     }
 
 
@@ -243,7 +243,31 @@ public class PtGenServiceImpl implements PtGenService {
      */
     private DouBan getDouBan(Integer douBanId, DouBanPage douBanPage, DouBanDetail detail, Map<String, List<String>> awards) {
         // 构建豆瓣对象
-        return DouBan.builder().id(douBanId).title(detail.getTitle()).type(douBanPage.getType()).originalTitle(detail.getOriginalTitle()).translatedName(detail.getTitle() + " / " + String.join(" / ", detail.getAka())).year(Integer.parseInt(detail.getYear())).countries(douBanPage.getCountries()).officialWebsite(douBanPage.getOfficialWebsite()).mainPic(detail.getPic().getLarge()).genres(douBanPage.getGenres()).languages(douBanPage.getLanguages()).publishDate(String.join(" / ", detail.getPubdate())).douBanScore(BigDecimal.valueOf(detail.getRating().getValue())).douBanPeople(String.valueOf(detail.getRating().getCount())).imdbId(douBanPage.getImdb()).season(douBanPage.getSeason()).episodesCount(douBanPage.getEpisodesCount()).durations(douBanPage.getDuration()).directors(douBanPage.getDirector().stream().map(Person::getName).collect(Collectors.joining(" / "))).actors(douBanPage.getActor().stream().map(Person::getName).collect(Collectors.joining("\n" + "　　　"))).dramatist(douBanPage.getAuthor().stream().map(Person::getName).collect(Collectors.joining(" / "))).intro(detail.getIntro()).awards(JSONUtil.parseObj(awards).toString()).createTime(LocalDateTime.now()).updateTime(LocalDateTime.now()).build();
+        return DouBan.builder()
+                .id(douBanId)
+                .title(detail.getTitle())
+                .type(douBanPage.getType())
+                .originalTitle(StrUtil.isEmpty(detail.getOriginalTitle()) ? detail.getTitle() : detail.getOriginalTitle())
+                .translatedName(StrUtil.isEmpty(detail.getOriginalTitle()) ? String.join(" / ", detail.getAka()) : detail.getTitle() + " / " + String.join(" / ", detail.getAka()))
+                .year(Integer.parseInt(detail.getYear()))
+                .countries(douBanPage.getCountries())
+                .officialWebsite(douBanPage.getOfficialWebsite())
+                .mainPic(detail.getPic().getLarge())
+                .genres(douBanPage.getGenres())
+                .languages(douBanPage.getLanguages())
+                .publishDate(String.join(" / ", detail.getPubdate()))
+                .douBanScore(BigDecimal.valueOf(detail.getRating().getValue()))
+                .douBanPeople(String.valueOf(detail.getRating().getCount()))
+                .imdbId(douBanPage.getImdb()).season(douBanPage.getSeason())
+                .episodesCount(douBanPage.getEpisodesCount())
+                .durations(douBanPage.getDuration())
+                .directors(douBanPage.getDirector()
+                        .stream().map(Person::getName).collect(Collectors.joining(" / ")))
+                .actors(douBanPage.getActor().stream().map(Person::getName).collect(Collectors.joining("\n" + "　　　")))
+                .dramatist(douBanPage.getAuthor().stream().map(Person::getName).collect(Collectors.joining(" / ")))
+                .intro(detail.getIntro()).awards(JSONUtil.parseObj(awards).toString())
+                .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now()).build();
     }
 
 

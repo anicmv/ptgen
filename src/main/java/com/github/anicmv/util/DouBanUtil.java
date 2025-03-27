@@ -55,7 +55,7 @@ public class DouBanUtil {
     }
 
 
-    public static ResponseEntity<JSONObject> success(String data) {
+    public static ResponseEntity<JSONObject> success(Object data) {
         JSONObject result = JSONUtil.createObj()
                 .putOpt("result", PtGenEnum.SUCCESS.getResult())
                 .putOnce("code", PtGenEnum.SUCCESS.getCode())
