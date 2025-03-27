@@ -22,7 +22,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, TokenAuthenticationFilter tokenAuthenticationFilter) throws Exception {
         return httpSecurity
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/ptgen", "/detail", "/old").permitAll()
+                        .requestMatchers("/ptgen", "/detail", "/old", "/cache", "/save").permitAll()
                         .anyRequest()
                         .authenticated()
                 )

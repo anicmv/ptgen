@@ -4,6 +4,8 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.github.anicmv.constant.DouBanConstant;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +23,8 @@ import java.time.LocalDateTime;
 @Builder
 public class DouBan {
     // 豆瓣id
-    private String id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
     // 标题
     private String title;
     // 豆瓣类型 TVSeries or Movie

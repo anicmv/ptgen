@@ -1,13 +1,12 @@
 package com.github.anicmv.controller;
 
 import cn.hutool.json.JSONObject;
+import com.github.anicmv.entity.DouBan;
 import com.github.anicmv.service.PtGenService;
 import com.github.anicmv.util.DouBanUtil;
 import jakarta.annotation.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author anicmv
@@ -23,7 +22,7 @@ public class PtGenController {
     @GetMapping("/ptgen")
     public ResponseEntity<String> ptGen(@RequestParam String url) {
         try {
-            String douBanId = DouBanUtil.extractDouBanId(url);
+            Integer douBanId = DouBanUtil.extractDouBanId(url);
             return service.ptGen(douBanId);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
@@ -33,10 +32,10 @@ public class PtGenController {
     @GetMapping("/detail")
     public ResponseEntity<JSONObject> detail(@RequestParam String url) {
         try {
-            String douBanId = DouBanUtil.extractDouBanId(url);
+            Integer douBanId = DouBanUtil.extractDouBanId(url);
             return service.detail(douBanId);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+            return DouBanUtil.error(e.getMessage());
         }
     }
 
@@ -44,10 +43,27 @@ public class PtGenController {
     @GetMapping("/old")
     public ResponseEntity<String> oldData(@RequestParam String url) {
         try {
-            String douBanId = DouBanUtil.extractDouBanId(url);
+            Integer douBanId = DouBanUtil.extractDouBanId(url);
             return service.oldData(douBanId);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+
+    @PostMapping("/save")
+    public ResponseEntity<JSONObject> save(@RequestBody DouBan douBan) {
+        return service.save(douBan);
+    }
+
+
+    @GetMapping("/cache")
+    public ResponseEntity<JSONObject> cache(@RequestParam String url) {
+        try {
+            Integer douBanId = DouBanUtil.extractDouBanId(url);
+            return service.cache(douBanId);
+        } catch (IllegalArgumentException e) {
+            return DouBanUtil.error(e.getMessage());
         }
     }
 }

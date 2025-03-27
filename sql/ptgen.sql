@@ -1,9 +1,9 @@
 DROP TABLE IF EXISTS `dou_ban`;
 CREATE TABLE `dou_ban`
 (
-    `id`               varchar(50)   NOT NULL COMMENT '豆瓣id',
+    `id`               bigint        NOT NULL COMMENT '豆瓣id',
     `type`             varchar(32)   NOT NULL COMMENT '豆瓣类型 TVSeries or Movie',
-    `title`            varchar(1024) NOT NULL COMMENT '标题',
+    `title`            varchar(512)  NOT NULL COMMENT '标题',
     `original_title`   varchar(1024) NOT NULL COMMENT '片名',
     `translated_name`  varchar(1024)          DEFAULT NULL COMMENT '译名',
     `year`             int           NOT NULL COMMENT '年代',
@@ -27,5 +27,6 @@ CREATE TABLE `dou_ban`
     `awards`           text COMMENT '获奖情况',
     `create_time`      datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_time`      datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    UNIQUE KEY `id_index` (`id`) USING BTREE
+    PRIMARY KEY (`id`),
+    KEY                `title_index` (`title`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='豆瓣信息';
