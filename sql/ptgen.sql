@@ -22,7 +22,6 @@ CREATE TABLE `dou_ban`
     `directors`        varchar(2048)          DEFAULT NULL COMMENT '导演',
     `actors`           varchar(2048)          DEFAULT NULL COMMENT '主演/演员',
     `dramatist`        varchar(2048)          DEFAULT NULL COMMENT '编剧',
-    `tags`             varchar(1024)          DEFAULT NULL COMMENT '标签',
     `intro`            text COMMENT '简介',
     `awards`           text COMMENT '获奖情况',
     `create_time`      datetime      NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',

@@ -65,8 +65,6 @@ public class DouBan {
     private String actors;
     // 编剧
     private String dramatist;
-    // 标签
-    private String tags;
     // 简介
     private String intro;
     // 获奖情况
@@ -140,9 +138,6 @@ public class DouBan {
         }
         if (StrUtil.isNotEmpty(actors)) {
             ptGen.append("◎主　　演　").append(actors).append("\n");
-        }
-        if (StrUtil.isNotEmpty(tags)) {
-            ptGen.append("◎标　　签　").append(tags).append("\n");
         }
         if (StrUtil.isNotEmpty(intro)) {
             ptGen.append("\n◎简　　介\n\n　　").append(intro.replaceAll("\n", "\n　　")).append("\n");
