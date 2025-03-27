@@ -670,7 +670,7 @@ POST /save
     "actors": "坂泰斗 Ban Taito\n　　　上田丽奈 Reina Ueda\n　　　平川大辅 Daisuke Hirakawa\n　　　东地宏树 Hiroki Touchi\n　　　银河万丈 Banjô Ginga\n　　　古川慎 Makoto Furukawa\n　　　中村源太 Nakamura Genta\n　　　三川华月 Mikawa Haruna",
     "dramatist": "秋空 Chugong",
     "intro": "自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化。然而，被称作是人类最弱兵器的程肖宇，在一次双重地下城的突击任务中得到了只有自己能够「升级」的能力，得以在战斗中不断变强。顺利通过转职任务，得到能操纵暗影士兵的职业「暗影君主」的肖宇，为了取得或许能医治母亲病情的道具「生命神水」的素材，而投身于新的战斗之中。",
-    "awards": "{1}",
+    "awards": "{}",
     "createTime": "2025-03-24T14:48:34.77171352",
     "updateTime": "2025-03-24T14:48:34.771813396"
 }
