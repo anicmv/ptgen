@@ -3,6 +3,7 @@ package com.github.anicmv.util;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.github.anicmv.enums.PtGenEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
@@ -14,7 +15,8 @@ import java.util.regex.Pattern;
  * @date 2025/3/24 20:22
  * @description 豆瓣工具类
  */
-public class DouBanUtil {
+@Slf4j
+public class PtGenUtil {
 
     /**
      * 提取 URL 中的豆瓣 ID
@@ -45,7 +47,6 @@ public class DouBanUtil {
     }
 
 
-
     public static ResponseEntity<JSONObject> success() {
         JSONObject result = JSONUtil.createObj()
                 .putOpt("result", PtGenEnum.SUCCESS.getResult())
@@ -70,5 +71,29 @@ public class DouBanUtil {
                 .putOnce("code", PtGenEnum.FAILURE.getCode())
                 .putOnce("data", msg);
         return ResponseEntity.ok().body(result);
+    }
+
+
+    /**
+     * 解析 JSONP 返回，提取内部的 JSON 数据
+     *
+     * @param responseText JSONP 格式字符串，例如 foo({...});
+     * @return 一个 JSONObject 对象，如果解析出错则返回空 JSONObject
+     */
+    public static JSONObject jsonpParser(String responseText) {
+        try {
+            // 去掉换行符
+            String cleaned = responseText.replaceAll("\\n", "");
+            // 正则表达式，匹配形如 '函数名({...})' 的格式
+            Pattern pattern = Pattern.compile("[^(]+\\((.+)\\)");
+            Matcher matcher = pattern.matcher(cleaned);
+            if (matcher.find()) {
+                String jsonString = matcher.group(1);
+                return new JSONObject(jsonString);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return new JSONObject();
     }
 }

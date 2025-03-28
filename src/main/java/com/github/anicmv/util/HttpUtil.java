@@ -2,14 +2,21 @@ package com.github.anicmv.util;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.github.anicmv.constant.PtGenConstant;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 /**
  * @author anicmv
@@ -60,6 +67,38 @@ public class HttpUtil {
             log.error("Error occurred during GET request to {}: ", url, e);
         }
         return null;
+    }
+
+    public static String getImdbJson(String imdbApi, Map<String, String> headers) {
+        HttpRequest request = requestBuilderGet(imdbApi, headers).build();
+        String imdbApiRaw = "";
+        try {
+            HttpResponse<byte[]> response = getHttpClient().send(request, HttpResponse.BodyHandlers.ofByteArray());
+            byte[] body = response.body();
+            String encoding = response.headers().firstValue(PtGenConstant.CE).orElse("");
+
+            if ("gzip".equalsIgnoreCase(encoding)) {
+                imdbApiRaw = decompressGzip(body);
+            } else {
+                imdbApiRaw = new String(body, StandardCharsets.UTF_8);
+            }
+        } catch (IOException | InterruptedException e) {
+            log.error("Error occurred during GET request to {}: ", imdbApi, e);
+        }
+        return imdbApiRaw;
+    }
+
+    private static String decompressGzip(byte[] compressedData) throws IOException {
+        try (GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(compressedData));
+             InputStreamReader reader = new InputStreamReader(gis, StandardCharsets.UTF_8);
+             BufferedReader in = new BufferedReader(reader)) {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = in.readLine()) != null) {
+                sb.append(line);
+            }
+            return sb.toString();
+        }
     }
 
 }

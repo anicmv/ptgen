@@ -6,15 +6,12 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.github.anicmv.config.DouBanConfig;
-import com.github.anicmv.constant.DouBanConstant;
-import com.github.anicmv.dto.DouBanDetail;
-import com.github.anicmv.dto.DouBanPage;
-import com.github.anicmv.dto.Person;
-import com.github.anicmv.dto.ResponseData;
+import com.github.anicmv.constant.PtGenConstant;
+import com.github.anicmv.dto.*;
 import com.github.anicmv.entity.DouBan;
 import com.github.anicmv.mapper.DouBanMapper;
 import com.github.anicmv.service.PtGenService;
-import com.github.anicmv.util.DouBanUtil;
+import com.github.anicmv.util.PtGenUtil;
 import com.github.anicmv.util.HttpUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -68,7 +65,7 @@ public class PtGenServiceImpl implements PtGenService {
                 log.info("没有数据，调取接口获取新数据 douBanId: {}", douBanId);
                 ResponseData data = getData(douBanId, false);
                 ptGen = (data != null && data.getPtGen() != null) ? data.getPtGen() : "";
-            } else if (DouBanUtil.hasPast30Days(douBan.getUpdateTime())) {
+            } else if (PtGenUtil.hasPast30Days(douBan.getUpdateTime())) {
                 log.info("数据已过期，重新请求数据 douBanId: {}", douBanId);
                 ResponseData data = getData(douBanId, true);
                 ptGen = (data != null && data.getPtGen() != null) ? data.getPtGen() : "";
@@ -129,10 +126,10 @@ public class PtGenServiceImpl implements PtGenService {
     @Override
     public ResponseEntity<JSONObject> save(DouBan douBan) {
         if (douBan.getId() == null) {
-            return DouBanUtil.error("豆瓣: null");
+            return PtGenUtil.error("豆瓣: null");
         }
         mapper.insertOrUpdate(douBan);
-        return DouBanUtil.success();
+        return PtGenUtil.success();
     }
 
 
@@ -145,12 +142,12 @@ public class PtGenServiceImpl implements PtGenService {
     public ResponseEntity<JSONObject> cache(Integer douBanId) {
         DouBan douBan = mapper.selectById(douBanId);
         if (douBan == null) {
-            return DouBanUtil.error("豆瓣: " + douBanId + ", not exist");
+            return PtGenUtil.error("豆瓣: " + douBanId + ", not exist");
         }
-        if (DouBanUtil.hasPast30Days(douBan.getUpdateTime())) {
-            return DouBanUtil.error("豆瓣: " + douBanId + ", expired");
+        if (PtGenUtil.hasPast30Days(douBan.getUpdateTime())) {
+            return PtGenUtil.error("豆瓣: " + douBanId + ", expired");
         }
-        return DouBanUtil.success(JSONUtil.parse(douBan));
+        return PtGenUtil.success(JSONUtil.parse(douBan));
     }
 
 
@@ -177,11 +174,31 @@ public class PtGenServiceImpl implements PtGenService {
         // 拿获奖名单
         Map<String, List<String>> awards = getAwards(douBanId);
 
+        // imdb信息
+        IMDbData imdb = getImdb(douBanPage.getImdb());
+
         // 豆瓣信息
-        DouBan douBan = getDouBan(douBanId, douBanPage, detail, awards);
+        DouBan douBan = getDouBan(douBanId, douBanPage, detail, awards, imdb);
         updateDouBan(douBan, exist);
 
         return ResponseData.builder().douBan(douBan).douBanDetail(detail).douBanPage(douBanPage).build().buildPtGen();
+    }
+
+
+    /**
+     * 获取imdb信息
+     *
+     * @param imdbId id
+     * @return IMDbData
+     */
+    private IMDbData getImdb(String imdbId) {
+        String imdbUrl = PtGenConstant.IMDB_F + imdbId + PtGenConstant.IMDB_L;
+        String imdbJsonStr = HttpUtil.getImdbJson(imdbUrl, Map.of(PtGenConstant.UA, PtGenConstant.USER_AGENT, PtGenConstant.AE, PtGenConstant.ACCEPT_ENCODING));
+        if (StrUtil.isEmpty(imdbJsonStr)) {
+            return IMDbData.builder().build();
+        }
+        JSONObject imdbJson = PtGenUtil.jsonpParser(imdbJsonStr);
+        return JSONUtil.toBean(imdbJson, IMDbData.class);
     }
 
 
@@ -206,8 +223,8 @@ public class PtGenServiceImpl implements PtGenService {
      * @param douBanId 豆瓣id
      */
     private DouBanPage getPageObj(Integer douBanId) {
-        String douBanLink = DouBanConstant.D_LINK + douBanId + DouBanConstant.S;
-        String pageRaw = HttpUtil.get(douBanLink, Map.of(DouBanConstant.COOKIE, config.getCookie(), DouBanConstant.UA, DouBanConstant.USER_AGENT));
+        String douBanLink = PtGenConstant.D_LINK + douBanId + PtGenConstant.S;
+        String pageRaw = HttpUtil.get(douBanLink, Map.of(PtGenConstant.COOKIE, config.getCookie(), PtGenConstant.UA, PtGenConstant.USER_AGENT));
 
         if (checkPageError(pageRaw)) {
             return null;
@@ -223,8 +240,8 @@ public class PtGenServiceImpl implements PtGenService {
      * @param type     movie or tv
      */
     private DouBanDetail getMovieDetail(Integer douBanId, String type) {
-        String api = config.getDetailApi() + type + DouBanConstant.S + douBanId + DouBanConstant.API_KEY + config.getApikey();
-        String result = HttpUtil.get(api, Map.of(DouBanConstant.UA, config.getUserAgent(), DouBanConstant.REFERER, config.getReferer()));
+        String api = config.getDetailApi() + type + PtGenConstant.S + douBanId + PtGenConstant.API_KEY + config.getApikey();
+        String result = HttpUtil.get(api, Map.of(PtGenConstant.UA, config.getUserAgent(), PtGenConstant.REFERER, config.getReferer()));
         if (result == null) {
             return null;
         }
@@ -239,9 +256,10 @@ public class PtGenServiceImpl implements PtGenService {
      * @param douBanPage 豆瓣页面数据
      * @param detail     豆瓣api数据
      * @param awards     奖杯页面信息
+     * @param imdb       imdb
      * @return 豆瓣
      */
-    private DouBan getDouBan(Integer douBanId, DouBanPage douBanPage, DouBanDetail detail, Map<String, List<String>> awards) {
+    private DouBan getDouBan(Integer douBanId, DouBanPage douBanPage, DouBanDetail detail, Map<String, List<String>> awards, IMDbData imdb) {
         // 构建豆瓣对象
         return DouBan.builder()
                 .id(douBanId)
@@ -256,15 +274,18 @@ public class PtGenServiceImpl implements PtGenService {
                 .genres(douBanPage.getGenres())
                 .languages(douBanPage.getLanguages())
                 .publishDate(String.join(" / ", detail.getPubdate()))
-                .douBanScore(BigDecimal.valueOf(detail.getRating().getValue()))
-                .douBanPeople(String.valueOf(detail.getRating().getCount()))
+                .douBanRating(BigDecimal.valueOf(detail.getRating().getValue()))
+                .douBanRatingCount(detail.getRating().getCount())
                 .imdbId(douBanPage.getImdb()).season(douBanPage.getSeason())
+                .imdbRating(imdb.getRating() == null ? BigDecimal.ZERO : imdb.getRating())
+                .imdbRatingCount(imdb.getRatingCount())
                 .episodesCount(douBanPage.getEpisodesCount())
                 .durations(douBanPage.getDuration())
                 .directors(douBanPage.getDirector()
                         .stream().map(Person::getName).collect(Collectors.joining(" / ")))
                 .actors(douBanPage.getActor().stream().map(Person::getName).collect(Collectors.joining("\n" + "　　　")))
                 .dramatist(douBanPage.getAuthor().stream().map(Person::getName).collect(Collectors.joining(" / ")))
+                .tags(douBanPage.getTags())
                 .intro(detail.getIntro()).awards(JSONUtil.parseObj(awards).toString())
                 .createTime(LocalDateTime.now())
                 .updateTime(LocalDateTime.now()).build();
@@ -277,8 +298,8 @@ public class PtGenServiceImpl implements PtGenService {
      * @param douBanId 豆瓣id
      */
     private Map<String, List<String>> getAwards(Integer douBanId) {
-        String awardsPageUrl = DouBanConstant.D_LINK + douBanId + DouBanConstant.AWARDS;
-        String awardsPage = HttpUtil.get(awardsPageUrl, Map.of(DouBanConstant.COOKIE, config.getCookie()));
+        String awardsPageUrl = PtGenConstant.D_LINK + douBanId + PtGenConstant.AWARDS;
+        String awardsPage = HttpUtil.get(awardsPageUrl, Map.of(PtGenConstant.COOKIE, config.getCookie()));
         if (awardsPage == null) {
             return null;
         }

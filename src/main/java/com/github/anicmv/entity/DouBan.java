@@ -6,7 +6,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.github.anicmv.constant.DouBanConstant;
+import com.github.anicmv.constant.PtGenConstant;
 import lombok.Builder;
 import lombok.Data;
 
@@ -47,12 +47,16 @@ public class DouBan {
     private String languages;
     // 首播/上映日期
     private String publishDate;
-    // 豆瓣评分
-    private BigDecimal douBanScore;
-    // 豆瓣评分人数
-    private String douBanPeople;
+    // IMDb评分
+    private BigDecimal imdbRating;
+    // IMDb评分人数
+    private Integer imdbRatingCount;
     // IMDb
     private String imdbId;
+    // 豆瓣评分
+    private BigDecimal douBanRating;
+    // 豆瓣评分人数
+    private Integer douBanRatingCount;
     // 季度
     private String season;
     // 集数
@@ -65,6 +69,8 @@ public class DouBan {
     private String actors;
     // 编剧
     private String dramatist;
+    // 标签
+    private String tags;
     // 简介
     private String intro;
     // 获奖情况
@@ -104,21 +110,25 @@ public class DouBan {
         if (StrUtil.isNotEmpty(publishDate)) {
             ptGen.append("◎上映日期　").append(publishDate).append("\n");
         }
-        //if (data.has("imdb_rating")) {
-        //     ptGenInfo.append("◎IMDb评分  ").append(data.getString("imdb_rating")).append("\n");
-        //}
-        //if (!imdbLink.isEmpty()) {
-        //     ptGenInfo.append("◎IMDb链接  ").append(imdbLink).append("\n");
-        //}
-        if (ObjectUtil.isNotEmpty(douBanScore)) {
-            //◎豆瓣评分　7.6/10 from 338581 users
-            ptGen.append("◎豆瓣评分　").append(douBanScore);
-            if (douBanPeople != null && douBanScore.compareTo(BigDecimal.ZERO) > 0) {
-                ptGen.append(" from ").append(douBanPeople).append(" users");
+        if (ObjectUtil.isNotEmpty(imdbRating)) {
+            ptGen.append("◎IMDb评分　").append(imdbRating);
+            if (imdbRatingCount != null && imdbRating.compareTo(BigDecimal.ZERO) > 0) {
+                ptGen.append(" from ").append(imdbRatingCount).append(" users");
             }
             ptGen.append("\n");
         }
-        ptGen.append("◎豆瓣链接　").append(DouBanConstant.D_LINK).append(id).append("/").append("\n");
+        if (StrUtil.isNotEmpty(imdbId)) {
+            ptGen.append("◎IMDb链接　").append(PtGenConstant.I_LINK).append(imdbId).append("/").append("\n");
+        }
+        if (ObjectUtil.isNotEmpty(douBanRating)) {
+            //◎豆瓣评分　7.6/10 from 338581 users
+            ptGen.append("◎豆瓣评分　").append(douBanRating.compareTo(BigDecimal.ZERO) == 0 ? 0: douBanRating);
+            if (douBanRatingCount != null && douBanRating.compareTo(BigDecimal.ZERO) > 0) {
+                ptGen.append(" from ").append(douBanRatingCount).append(" users");
+            }
+            ptGen.append("\n");
+        }
+        ptGen.append("◎豆瓣链接　").append(PtGenConstant.D_LINK).append(id).append("/").append("\n");
         if (StrUtil.isNotEmpty(season)) {
             ptGen.append("◎季　　度　").append(season).append("\n");
         }
@@ -138,6 +148,9 @@ public class DouBan {
         }
         if (StrUtil.isNotEmpty(actors)) {
             ptGen.append("◎主　　演　").append(actors).append("\n");
+        }
+        if (StrUtil.isNotEmpty(tags)) {
+            ptGen.append("◎标　　签　").append(tags).append("\n");
         }
         if (StrUtil.isNotEmpty(intro)) {
             ptGen.append("\n◎简　　介\n\n　　").append(intro.replaceAll("\n", "\n　　")).append("\n");
