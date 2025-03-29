@@ -36,7 +36,7 @@
 **示例请求**
 
 ```
-GET /ptgen?url={豆瓣url或者id}
+GET /ptgen?url=36837352
 ```
 
 **成功响应**
@@ -52,7 +52,9 @@ GET /ptgen?url={豆瓣url或者id}
 ◎官方网站　https://sololeveling-anime.net
 ◎语　　言　日语
 ◎上映日期　2025-01-04(日本)
-◎豆瓣评分　8.8 from 7902 users
+◎IMDb评分　9.1 from 10418 users
+◎IMDb链接　https://www.imdb.com/title/tt31960864/
+◎豆瓣评分　8.8 from 8628 users
 ◎豆瓣链接　https://movie.douban.com/subject/36837352/
 ◎集　　数　13
 ◎片　　长　24分钟
@@ -86,7 +88,7 @@ GET /ptgen?url={豆瓣url或者id}
 **示例请求**
 
 ```
-GET /detail?url={豆瓣url或者id}
+GET /detail?url=36837352
 ```
 
 **成功响应**
@@ -106,18 +108,20 @@ GET /detail?url={豆瓣url或者id}
         "genres": "剧情 / 动作 / 动画 / 奇幻 / 冒险",
         "languages": "日语",
         "publishDate": "2025-01-04(日本)",
-        "douBanScore": 8.8,
-        "douBanPeople": "7916",
+        "imdbRating": 9.1,
+        "imdbRatingCount": 10418,
         "imdbId": "tt31960864",
+        "douBanRating": 8.8,
+        "douBanRatingCount": 8628,
         "episodesCount": 13,
-        "durations": "PT0H24M",
+        "durations": 24,
         "directors": "中重俊祐 Nakashige Shunsuke",
         "actors": "坂泰斗 Ban Taito\n　　　上田丽奈 Reina Ueda\n　　　平川大辅 Daisuke Hirakawa\n　　　东地宏树 Hiroki Touchi\n　　　银河万丈 Banjô Ginga\n　　　古川慎 Makoto Furukawa\n　　　中村源太 Nakamura Genta\n　　　三川华月 Mikawa Haruna",
         "dramatist": "秋空 Chugong",
         "intro": "自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化。然而，被称作是人类最弱兵器的程肖宇，在一次双重地下城的突击任务中得到了只有自己能够「升级」的能力，得以在战斗中不断变强。顺利通过转职任务，得到能操纵暗影士兵的职业「暗影君主」的肖宇，为了取得或许能医治母亲病情的道具「生命神水」的素材，而投身于新的战斗之中。",
         "awards": "{}",
-        "createTime": "2025-03-24T14:48:34.77171352",
-        "updateTime": "2025-03-24T14:48:34.771813396"
+        "createTime": "2025-03-29T06:30:17.325667035",
+        "updateTime": "2025-03-29T06:30:17.325684888"
     },
     "douBanPage": {
         "context": "http://schema.org",
@@ -200,7 +204,7 @@ GET /detail?url={豆瓣url或者id}
         "type": "TVSeries",
         "aggregateRating": {
             "type": "AggregateRating",
-            "ratingCount": 7832,
+            "ratingCount": 8564,
             "bestRating": 10,
             "worstRating": 2,
             "ratingValue": 8.8
@@ -210,7 +214,7 @@ GET /detail?url={豆瓣url或者id}
         "rating": {
             "value": 8.8,
             "starCount": 4,
-            "count": 7916,
+            "count": 8628,
             "max": 10
         },
         "lineticketUrl": "",
@@ -249,7 +253,7 @@ GET /detail?url={豆瓣url或者id}
                 "uid": "dinokiller912",
                 "url": "https://www.douban.com/people/81796416/",
                 "type": "user",
-                "avatar": "https://img9.doubanio.com/icon/up81796416-6.jpg",
+                "avatar": "https://img3.doubanio.com/icon/up81796416-13.jpg",
                 "avatarSideIconType": 0,
                 "loc": {
                     "id": "108296",
@@ -291,7 +295,7 @@ GET /detail?url={豆瓣url或者id}
             "uri": "douban://douban.com/photo/2917604260",
             "url": "https://movie.douban.com/photos/photo/2917604260/"
         },
-        "episodesInfo": "更新至9集",
+        "episodesInfo": "更新至10集",
         "isRestrictive": false,
         "vendorDesc": "",
         "webisodeCount": 0,
@@ -321,11 +325,11 @@ GET /detail?url={豆瓣url或者id}
         "nullRatingReason": "",
         "type": "tv",
         "interestCmtEarlierTipDesc": "该短评的发布时间早于公开上映时间，作者可能通过其他渠道提前观看，请谨慎参考。其评分将不计入总评分。",
-        "reviewCount": 5,
+        "reviewCount": 8,
         "hasLinewatch": true,
         "episodesCount": 13,
         "honorInfos": [],
-        "commentCount": 1674,
+        "commentCount": 1855,
         "forumTopicCount": 1,
         "vendors": [
             {
@@ -365,7 +369,7 @@ GET /detail?url={豆瓣url或者id}
                 "clickTracking": "",
                 "bgImage": "",
                 "bookType": "",
-                "episodesInfo": "更新至9集"
+                "episodesInfo": "更新至10集"
             }
         ],
         "ticketPromoText": "",
@@ -524,7 +528,7 @@ GET /detail?url={豆瓣url或者id}
                     {
                         "id": "ugc_tab",
                         "data": {
-                            "count": 98,
+                            "count": 103,
                             "title": "小组讨论",
                             "uri": "douban://partial.douban.com/subject/36837352/group_topic/_content?group_id=740749&topic_tag_id=157923",
                             "source": "小组讨论",
@@ -554,7 +558,7 @@ GET /detail?url={豆瓣url或者id}
                 "title": "预告片",
                 "nComments": 1,
                 "type": "A",
-                "videoUrl": "https://vt1.doubanio.com/202503242234/ea8e6c37f2776963424a7595f4ba1032/view/movie/M/703190112.mp4",
+                "videoUrl": "https://vt1.doubanio.com/202503291436/34e260f61cab399cb16fe0ae9a76bf14/view/movie/M/703190112.mp4",
                 "desc": "",
                 "fileSize": 51930883,
                 "createTime": "2024-12-26",
@@ -568,7 +572,7 @@ GET /detail?url={豆瓣url或者id}
         "isDoubanIntro": false,
         "subjectCollections": []
     },
-    "ptGen": "[img]https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2917604260.jpg[/img]\n\n◎译　　名　我独自升级 第二季 -起于暗影- / 我独自升级：暗影崛起 / 我独自升级 第二季 -Arise from the Shadow- / 나 혼자만 레벨업 Season 2 / Solo Leveling Season 2 / Solo Leveling: Arise From the Shadow\n◎片　　名　俺だけレベルアップな件 Season 2 -Arise from the Shadow-\n◎年　　代　2025\n◎产　　地　日本 / 韩国\n◎类　　型　剧情 / 动作 / 动画 / 奇幻 / 冒险\n◎官方网站　https://sololeveling-anime.net\n◎语　　言　日语\n◎上映日期　2025-01-04(日本)\n◎豆瓣评分　8.8 from 7916 users\n◎豆瓣链接　https://movie.douban.com/subject/36837352/\n◎集　　数　13\n◎片　　长　24分钟\n◎导　　演　中重俊祐 Nakashige Shunsuke\n◎编　　剧　秋空 Chugong\n◎主　　演　坂泰斗 Ban Taito\n　　　上田丽奈 Reina Ueda\n　　　平川大辅 Daisuke Hirakawa\n　　　东地宏树 Hiroki Touchi\n　　　银河万丈 Banjô Ginga\n　　　古川慎 Makoto Furukawa\n　　　中村源太 Nakamura Genta\n　　　三川华月 Mikawa Haruna\n\n◎简　　介\n\n　　自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化。然而，被称作是人类最弱兵器的程肖宇，在一次双重地下城的突击任务中得到了只有自己能够「升级」的能力，得以在战斗中不断变强。顺利通过转职任务，得到能操纵暗影士兵的职业「暗影君主」的肖宇，为了取得或许能医治母亲病情的道具「生命神水」的素材，而投身于新的战斗之中。\n"
+    "ptGen": "[img]https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2917604260.jpg[/img]\n\n◎译　　名　我独自升级 第二季 -起于暗影- / 我独自升级：暗影崛起 / 我独自升级 第二季 -Arise from the Shadow- / 나 혼자만 레벨업 Season 2 / Solo Leveling Season 2 / Solo Leveling: Arise From the Shadow\n◎片　　名　俺だけレベルアップな件 Season 2 -Arise from the Shadow-\n◎年　　代　2025\n◎产　　地　日本 / 韩国\n◎类　　型　剧情 / 动作 / 动画 / 奇幻 / 冒险\n◎官方网站　https://sololeveling-anime.net\n◎语　　言　日语\n◎上映日期　2025-01-04(日本)\n◎IMDb评分　9.1 from 10418 users\n◎IMDb链接　https://www.imdb.com/title/tt31960864/\n◎豆瓣评分　8.8 from 8628 users\n◎豆瓣链接　https://movie.douban.com/subject/36837352/\n◎集　　数　13\n◎片　　长　24分钟\n◎导　　演　中重俊祐 Nakashige Shunsuke\n◎编　　剧　秋空 Chugong\n◎主　　演　坂泰斗 Ban Taito\n　　　上田丽奈 Reina Ueda\n　　　平川大辅 Daisuke Hirakawa\n　　　东地宏树 Hiroki Touchi\n　　　银河万丈 Banjô Ginga\n　　　古川慎 Makoto Furukawa\n　　　中村源太 Nakamura Genta\n　　　三川华月 Mikawa Haruna\n\n◎简　　介\n\n　　自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化。然而，被称作是人类最弱兵器的程肖宇，在一次双重地下城的突击任务中得到了只有自己能够「升级」的能力，得以在战斗中不断变强。顺利通过转职任务，得到能操纵暗影士兵的职业「暗影君主」的肖宇，为了取得或许能医治母亲病情的道具「生命神水」的素材，而投身于新的战斗之中。\n"
 }
 ```
 
@@ -585,7 +589,7 @@ GET /detail?url={豆瓣url或者id}
 **示例请求**
 
 ```
-GET /old?url={豆瓣url或者id}
+GET /old?url=36837352
 ```
 
 **成功响应**
@@ -601,7 +605,9 @@ GET /old?url={豆瓣url或者id}
 ◎官方网站　https://sololeveling-anime.net
 ◎语　　言　日语
 ◎上映日期　2025-01-04(日本)
-◎豆瓣评分　8.8 from 7902 users
+◎IMDb评分　9.1 from 10418 users
+◎IMDb链接　https://www.imdb.com/title/tt31960864/
+◎豆瓣评分　8.8 from 8628 users
 ◎豆瓣链接　https://movie.douban.com/subject/36837352/
 ◎集　　数　13
 ◎片　　长　24分钟
@@ -661,18 +667,20 @@ POST /save
     "genres": "剧情 / 动作 / 动画 / 奇幻 / 冒险",
     "languages": "日语",
     "publishDate": "2025-01-04(日本)",
-    "douBanScore": 8.8,
-    "douBanPeople": "7916",
+    "imdbRating": 9.1,
+    "imdbRatingCount": 10418,
     "imdbId": "tt31960864",
+    "douBanRating": 8.8,
+    "douBanRatingCount": 8628,
     "episodesCount": 13,
-    "durations": "PT0H24M",
+    "durations": 24,
     "directors": "中重俊祐 Nakashige Shunsuke",
     "actors": "坂泰斗 Ban Taito\n　　　上田丽奈 Reina Ueda\n　　　平川大辅 Daisuke Hirakawa\n　　　东地宏树 Hiroki Touchi\n　　　银河万丈 Banjô Ginga\n　　　古川慎 Makoto Furukawa\n　　　中村源太 Nakamura Genta\n　　　三川华月 Mikawa Haruna",
     "dramatist": "秋空 Chugong",
     "intro": "自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化。然而，被称作是人类最弱兵器的程肖宇，在一次双重地下城的突击任务中得到了只有自己能够「升级」的能力，得以在战斗中不断变强。顺利通过转职任务，得到能操纵暗影士兵的职业「暗影君主」的肖宇，为了取得或许能医治母亲病情的道具「生命神水」的素材，而投身于新的战斗之中。",
     "awards": "{}",
-    "createTime": "2025-03-24T14:48:34.77171352",
-    "updateTime": "2025-03-24T14:48:34.771813396"
+    "createTime": "2025-03-29T06:30:17.325667035",
+    "updateTime": "2025-03-29T06:30:17.325684888"
 }
 ```
 
@@ -699,7 +707,7 @@ POST /save
 **示例请求**
 
 ```
-GET /cache?url={豆瓣url或者id}
+GET /cache?url=36837352
 ```
 
 **成功响应**   
