@@ -24,7 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -290,8 +289,7 @@ public class PtGenServiceImpl implements PtGenService {
                 .dramatist(douBanPage.getAuthor().stream().map(Person::getName).collect(Collectors.joining(" / ")))
                 .tags(douBanPage.getTags())
                 .intro(detail.getIntro()).awards(JSONUtil.parseObj(awards).toString())
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now()).build();
+                .build();
     }
 
 

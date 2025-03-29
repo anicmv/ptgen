@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 /**
  * @author anicmv
@@ -75,9 +75,9 @@ public class DouBan {
     // 获奖情况
     private String awards;
     // 创建时间
-    private LocalDateTime createTime;
+    private Timestamp createTime;
     // 更新时间
-    private LocalDateTime updateTime;
+    private Timestamp updateTime;
 
     // 构建ptGen
     public String buildPtGen() {

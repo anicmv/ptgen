@@ -7,8 +7,11 @@ import com.github.anicmv.enums.PtGenEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,12 +43,48 @@ public class PtGenUtil {
     /**
      * 30天过期判断
      *
+     * @param startDate 数据库更新日期
+     * @return true 表示已过期（即超过30天）
+     */
+    public static boolean hasPast30Days(Date startDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+        calendar.add(Calendar.DAY_OF_YEAR, 30);
+        Date thirtyDaysLater = calendar.getTime();
+
+        // 当前时间
+        Date now = new Date();
+        return thirtyDaysLater.before(now);
+    }
+
+
+    /**
+     * 30天过期判断
+     *
      * @param startDateTime 数据库更新日期
      * @return true 过期
      */
     public static boolean hasPast30Days(LocalDateTime startDateTime) {
         LocalDateTime thirtyDaysLater = startDateTime.plusDays(30);
         return thirtyDaysLater.isBefore(LocalDateTime.now());
+    }
+
+
+    /**
+     * 30天过期判断
+     *
+     * @param startTime 数据库更新日期
+     * @return true 表示已过期（即超过30天）
+     */
+    public static boolean hasPast30Days(Timestamp startTime) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startTime);
+        calendar.add(Calendar.DAY_OF_YEAR, 30);
+        Timestamp thirtyDaysLater = new Timestamp(calendar.getTimeInMillis());
+
+        // 当前时间
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        return thirtyDaysLater.before(now);
     }
 
 

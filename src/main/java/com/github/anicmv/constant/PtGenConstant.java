@@ -20,5 +20,7 @@ public class PtGenConstant {
     public static final String API_KEY = "?apiKey=";
     public static final String S = "/";
     public static final String AWARDS = "/awards/";
+    public static final String TIMEZONE = "Asia/Shanghai";
+    public static final String PATTERN = "yyyy-MM-dd";
 
 }
