@@ -1,11 +1,13 @@
 package com.github.anicmv.util;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.github.anicmv.enums.PtGenEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -95,5 +97,20 @@ public class PtGenUtil {
             log.error(e.getMessage());
         }
         return new JSONObject();
+    }
+
+
+    /**
+     * 获取时长
+     *
+     * @param durations 时长 PT0H24M
+     * @return 整数
+     */
+    public static int getDurations(String durations) {
+        if (StrUtil.isEmpty(durations)) {
+            return 0;
+        }
+        Duration duration = Duration.parse(durations);
+        return (int) duration.toMinutes();
     }
 }

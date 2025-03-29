@@ -11,8 +11,8 @@ import com.github.anicmv.dto.*;
 import com.github.anicmv.entity.DouBan;
 import com.github.anicmv.mapper.DouBanMapper;
 import com.github.anicmv.service.PtGenService;
-import com.github.anicmv.util.PtGenUtil;
 import com.github.anicmv.util.HttpUtil;
+import com.github.anicmv.util.PtGenUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -198,7 +198,10 @@ public class PtGenServiceImpl implements PtGenService {
             return IMDbData.builder().build();
         }
         JSONObject imdbJson = PtGenUtil.jsonpParser(imdbJsonStr);
-        return JSONUtil.toBean(imdbJson, IMDbData.class);
+        if (imdbJson.get("resource") == null) {
+            return IMDbData.builder().build();
+        }
+        return JSONUtil.toBean(imdbJson.getJSONObject("resource"), IMDbData.class);
     }
 
 
@@ -280,7 +283,7 @@ public class PtGenServiceImpl implements PtGenService {
                 .imdbRating(imdb.getRating() == null ? BigDecimal.ZERO : imdb.getRating())
                 .imdbRatingCount(imdb.getRatingCount())
                 .episodesCount(douBanPage.getEpisodesCount())
-                .durations(douBanPage.getDuration())
+                .durations(PtGenUtil.getDurations(douBanPage.getDuration()))
                 .directors(douBanPage.getDirector()
                         .stream().map(Person::getName).collect(Collectors.joining(" / ")))
                 .actors(douBanPage.getActor().stream().map(Person::getName).collect(Collectors.joining("\n" + "　　　")))

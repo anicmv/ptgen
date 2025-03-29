@@ -1,0 +1,25 @@
+server:
+  port: 8080
+  forward-headers-strategy: native
+
+spring:
+  application:
+    name: ptgen
+  datasource:
+    url: jdbc:mysql://localhost:3306/ptgen?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#SQL 日志 标准输出在控制台
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+douban:
+  detailApi: api
+  apikey: api_key
+  accessToken: your_token
+  role: uploader
+  userAgent: api_user_agent
+  referer: api_refer
+  cookie: douban_cookie

@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
@@ -62,7 +61,7 @@ public class DouBan {
     // 集数
     private Integer episodesCount;
     // 单集片长
-    private String durations;
+    private Integer durations;
     // 导演
     private String directors;
     // 主演/演员
@@ -122,7 +121,7 @@ public class DouBan {
         }
         if (ObjectUtil.isNotEmpty(douBanRating)) {
             //◎豆瓣评分　7.6/10 from 338581 users
-            ptGen.append("◎豆瓣评分　").append(douBanRating.compareTo(BigDecimal.ZERO) == 0 ? 0: douBanRating);
+            ptGen.append("◎豆瓣评分　").append(douBanRating.compareTo(BigDecimal.ZERO) == 0 ? 0 : douBanRating);
             if (douBanRatingCount != null && douBanRating.compareTo(BigDecimal.ZERO) > 0) {
                 ptGen.append(" from ").append(douBanRatingCount).append(" users");
             }
@@ -135,10 +134,8 @@ public class DouBan {
         if (ObjectUtil.isNotEmpty(episodesCount)) {
             ptGen.append("◎集　　数　").append(episodesCount).append("\n");
         }
-        if (StrUtil.isNotEmpty(durations)) {
-            Duration duration = Duration.parse(durations);
-            long minutes = duration.toMinutes();
-            ptGen.append("◎片　　长　").append(minutes).append("分钟").append("\n");
+        if (ObjectUtil.isNotEmpty(durations) && durations.compareTo(0) > 0) {
+            ptGen.append("◎片　　长　").append(durations).append("分钟").append("\n");
         }
         if (StrUtil.isNotEmpty(directors)) {
             ptGen.append("◎导　　演　").append(directors).append("\n");
