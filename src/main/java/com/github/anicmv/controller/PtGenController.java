@@ -20,9 +20,9 @@ public class PtGenController {
     private PtGenService service;
 
     @GetMapping("/ptgen")
-    public ResponseEntity<String> ptGen(@RequestParam String url) {
+    public ResponseEntity<String> ptGen(@RequestParam String douban) {
         try {
-            Integer douBanId = PtGenUtil.extractDouBanId(url);
+            Integer douBanId = PtGenUtil.extractDouBanId(douban);
             return service.ptGen(douBanId);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
@@ -30,9 +30,9 @@ public class PtGenController {
     }
 
     @GetMapping("/detail")
-    public ResponseEntity<JSONObject> detail(@RequestParam String url) {
+    public ResponseEntity<JSONObject> detail(@RequestParam String douban) {
         try {
-            Integer douBanId = PtGenUtil.extractDouBanId(url);
+            Integer douBanId = PtGenUtil.extractDouBanId(douban);
             return service.detail(douBanId);
         } catch (IllegalArgumentException e) {
             return PtGenUtil.error(e.getMessage());
@@ -41,9 +41,9 @@ public class PtGenController {
 
 
     @GetMapping("/old")
-    public ResponseEntity<String> oldData(@RequestParam String url) {
+    public ResponseEntity<String> oldData(@RequestParam String douban) {
         try {
-            Integer douBanId = PtGenUtil.extractDouBanId(url);
+            Integer douBanId = PtGenUtil.extractDouBanId(douban);
             return service.oldData(douBanId);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
@@ -58,9 +58,9 @@ public class PtGenController {
 
 
     @GetMapping("/cache")
-    public ResponseEntity<JSONObject> cache(@RequestParam String url) {
+    public ResponseEntity<JSONObject> cache(@RequestParam String douban) {
         try {
-            Integer douBanId = PtGenUtil.extractDouBanId(url);
+            Integer douBanId = PtGenUtil.extractDouBanId(douban);
             return service.cache(douBanId);
         } catch (IllegalArgumentException e) {
             return PtGenUtil.error(e.getMessage());

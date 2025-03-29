@@ -25,7 +25,7 @@
 
 ### PT Gen信息生成接口
 
-接口地址: `GET /ptgen?url={豆瓣url或者id}`   
+接口地址: `GET /ptgen?douban={豆瓣url或者id}`   
 接口描述: 返回PT Gen字符串  
 **请求头 (Headers)**
 
@@ -36,7 +36,7 @@
 **示例请求**
 
 ```
-GET /ptgen?url=36837352
+GET /ptgen?douban=36837352
 ```
 
 **成功响应**
@@ -77,7 +77,7 @@ GET /ptgen?url=36837352
 
 ### 豆瓣详情信息接口
 
-接口地址: `GET /detail?url={豆瓣url或者id}`   
+接口地址: `GET /detail?douban={豆瓣url或者id}`   
 接口描述: 返回PT Gen字符串  
 **请求头 (Headers)**
 
@@ -88,7 +88,7 @@ GET /ptgen?url=36837352
 **示例请求**
 
 ```
-GET /detail?url=36837352
+GET /detail?douban=36837352
 ```
 
 **成功响应**
@@ -578,7 +578,7 @@ GET /detail?url=36837352
 
 ### 直接从存量数据库生成PT Gen信息
 
-接口地址: `GET /old?url={豆瓣url或者id}`   
+接口地址: `GET /old?douban={豆瓣url或者id}`   
 接口描述: 返回PT Gen字符串  
 **请求头 (Headers)**
 
@@ -589,7 +589,7 @@ GET /detail?url=36837352
 **示例请求**
 
 ```
-GET /old?url=36837352
+GET /old?douban=36837352
 ```
 
 **成功响应**
@@ -696,7 +696,7 @@ POST /save
 
 ### 从存量数据中获取不过期的数据
 
-接口地址: `GET /cache?url={豆瓣url或者id}`   
+接口地址: `GET /cache?douban={豆瓣url或者id}`   
 接口描述: 返回JSON  
 **请求头 (Headers)**
 
@@ -707,7 +707,7 @@ POST /save
 **示例请求**
 
 ```
-GET /cache?url=36837352
+GET /cache?douban=36837352
 ```
 
 **成功响应**   
