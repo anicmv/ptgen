@@ -20,7 +20,7 @@ public class PtGenController {
     private PtGenService service;
 
     @GetMapping("/ptgen")
-    public ResponseEntity<String> ptGen(@RequestParam String douban) {
+    public ResponseEntity<String> ptGenHandle(@RequestParam String douban) {
         try {
             Integer douBanId = PtGenUtil.extractDouBanId(douban);
             return service.ptGen(douBanId);
@@ -30,7 +30,7 @@ public class PtGenController {
     }
 
     @GetMapping("/detail")
-    public ResponseEntity<JSONObject> detail(@RequestParam String douban) {
+    public ResponseEntity<JSONObject> detailHandle(@RequestParam String douban) {
         try {
             Integer douBanId = PtGenUtil.extractDouBanId(douban);
             return service.detail(douBanId);
@@ -41,7 +41,7 @@ public class PtGenController {
 
 
     @GetMapping("/old")
-    public ResponseEntity<String> oldData(@RequestParam String douban) {
+    public ResponseEntity<String> oldHandle(@RequestParam String douban) {
         try {
             Integer douBanId = PtGenUtil.extractDouBanId(douban);
             return service.oldData(douBanId);
@@ -52,13 +52,13 @@ public class PtGenController {
 
 
     @PostMapping("/save")
-    public ResponseEntity<JSONObject> save(@RequestBody DouBan douBan) {
+    public ResponseEntity<JSONObject> saveHandle(@RequestBody DouBan douBan) {
         return service.save(douBan);
     }
 
 
     @GetMapping("/cache")
-    public ResponseEntity<JSONObject> cache(@RequestParam String douban) {
+    public ResponseEntity<JSONObject> cacheHandle(@RequestParam String douban) {
         try {
             Integer douBanId = PtGenUtil.extractDouBanId(douban);
             return service.cache(douBanId);
