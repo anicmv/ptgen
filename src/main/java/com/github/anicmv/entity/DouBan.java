@@ -6,6 +6,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.anicmv.constant.PtGenConstant;
 import lombok.Builder;
 import lombok.Data;
@@ -75,8 +76,10 @@ public class DouBan {
     // 获奖情况
     private String awards;
     // 创建时间
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Timestamp createTime;
     // 更新时间
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Timestamp updateTime;
 
     // 构建ptGen

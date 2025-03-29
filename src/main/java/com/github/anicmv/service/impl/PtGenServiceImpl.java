@@ -146,7 +146,13 @@ public class PtGenServiceImpl implements PtGenService {
         if (PtGenUtil.hasPast30Days(douBan.getUpdateTime())) {
             return PtGenUtil.error("豆瓣: " + douBanId + ", expired");
         }
-        return PtGenUtil.success(JSONUtil.parse(douBan));
+        JSONObject douBanJson = JSONUtil.parseObj(douBan);
+        if (douBanJson == null) {
+            return PtGenUtil.error("豆瓣: " + douBanId + ", convert error");
+        }
+        douBanJson.set("createTime", douBan.getCreateTime().getTime());
+        douBanJson.set("updateTime", douBan.getUpdateTime().getTime());
+        return PtGenUtil.success(douBanJson);
     }
 
 
