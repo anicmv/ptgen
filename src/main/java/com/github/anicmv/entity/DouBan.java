@@ -155,11 +155,11 @@ public class DouBan {
         if (StrUtil.isNotEmpty(intro)) {
             ptGen.append("\n◎简　　介\n\n　　").append(intro.replaceAll("\n", "\n　　")).append("\n");
         }
-        if (awards != null && awards.isEmpty()) {
-            JSONObject awards = JSONUtil.parseObj(actors);
-            if (ObjectUtil.isNotEmpty(awards)) {
+        if (StrUtil.isNotEmpty(awards)) {
+            JSONObject awardsJson = JSONUtil.parseObj(awards);
+            if (ObjectUtil.isNotEmpty(awardsJson)) {
                 StringBuilder awardsStr = new StringBuilder();
-                awards.forEach((key, value) -> {
+                awardsJson.forEach((key, value) -> {
                     awardsStr.append(key).append("\n");
                     JSONUtil.parseArray(value).forEach(v -> awardsStr.append(v).append("\n"));
                     awardsStr.append("\n");
