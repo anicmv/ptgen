@@ -293,7 +293,7 @@ public class PtGenServiceImpl implements PtGenService {
                 .durations(douBanPage.getDuration())
                 .directors(douBanPage.getDirector()
                         .stream().map(Person::getName).collect(Collectors.joining(" / ")))
-                .actors(douBanPage.getActor().stream().map(Person::getName).collect(Collectors.joining("\n" + "　　　")))
+                .actors(douBanPage.getActor().stream().map(Person::getName).collect(Collectors.joining("\n" + "　　　　　 ")))
                 .dramatist(douBanPage.getAuthor().stream().map(Person::getName).collect(Collectors.joining(" / ")))
                 .tags(douBanPage.getTags())
                 .intro(detail.getIntro()).awards(JSONUtil.parseObj(awards).toString())
