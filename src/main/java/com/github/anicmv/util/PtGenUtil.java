@@ -1,8 +1,10 @@
 package com.github.anicmv.util;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.github.anicmv.entity.DouBan;
 import com.github.anicmv.enums.PtGenEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -151,5 +155,51 @@ public class PtGenUtil {
         }
         Duration duration = Duration.parse(durations);
         return (int) duration.toMinutes();
+    }
+
+
+
+    /**
+     * 将获奖信息通过空行分组转换为 JSON 对象。
+     * 每组第一行为奖项标题，其余非空行为详情。
+     *
+     * @param douBan awards多行文本格式的获奖信息
+     */
+    public static void convertAwards(DouBan douBan) {
+        String awardsRaw = douBan.getAwards();
+        if (StrUtil.isEmpty(awardsRaw)) {
+            return;
+        }
+        // 使用 LinkedHashMap 保持顺序
+        Map<String, JSONArray> awardsMap = new LinkedHashMap<>();
+        // 先按照换行符拆分每一行，支持 Windows 与 Unix 行尾
+        String[] lines = awardsRaw.split("\\r?\\n");
+        String currentTitle = null;
+        JSONArray currentDetails = null;
+
+        for (String line : lines) {
+            // 去除前后空白及全角空格
+            line = line.trim().replaceAll("\\u3000", "");
+            if(line.isEmpty()){
+                // 遇到空行时，重置当前组，使下一行作为新的标题处理
+                currentTitle = null;
+                currentDetails = null;
+                continue;
+            }
+            if(currentTitle == null){
+                // 当前组，第一行视为标题
+                currentTitle = line;
+                currentDetails = new JSONArray();
+                awardsMap.put(currentTitle, currentDetails);
+            } else {
+                // 当前组后续行视为详情
+                currentDetails.put(line);
+            }
+        }
+
+        // 构造 JSONObject
+        JSONObject result = new JSONObject();
+        result.putAll(awardsMap);
+        douBan.setAwards(result.toString());
     }
 }

@@ -127,6 +127,8 @@ public class PtGenServiceImpl implements PtGenService {
         if (douBan.getId() == null) {
             return PtGenUtil.error("豆瓣: null");
         }
+        // 转换获奖情况
+        PtGenUtil.convertAwards(douBan);
         mapper.insertOrUpdate(douBan);
         return PtGenUtil.success();
     }
