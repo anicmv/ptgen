@@ -5,10 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.github.anicmv.constant.PtGenConstant;
 import lombok.extern.log4j.Log4j2;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -99,6 +96,29 @@ public class HttpUtil {
             }
             return sb.toString();
         }
+    }
+
+    public static InputStream getInputStream(String url, Map<String, String> headers) {
+        if (StrUtil.isEmpty(url)) {
+            log.error("URL cannot be null or empty");
+            return null;
+        }
+
+        try {
+            HttpRequest request = requestBuilderGet(url, headers).build();
+            HttpResponse<InputStream> response = getHttpClient().send(request, HttpResponse.BodyHandlers.ofInputStream());
+            int statusCode = response.statusCode();
+
+            if (statusCode < 200 || statusCode >= 300) {
+                log.error("Request to {} failed with status code: {}", url, statusCode);
+                return null;
+            }
+
+            return response.body();
+        } catch (Exception e) {
+            log.error("Error occurred during GET request to {}: ", url, e);
+        }
+        return null;
     }
 
 }

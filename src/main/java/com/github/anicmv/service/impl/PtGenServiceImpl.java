@@ -288,7 +288,7 @@ public class PtGenServiceImpl implements PtGenService {
                 .imdbRating(imdb.getRating() == null ? BigDecimal.ZERO : imdb.getRating())
                 .imdbRatingCount(imdb.getRatingCount())
                 .episodesCount(douBanPage.getEpisodesCount())
-                .durations(PtGenUtil.getDurations(douBanPage.getDuration()))
+                .durations(douBanPage.getDuration())
                 .directors(douBanPage.getDirector()
                         .stream().map(Person::getName).collect(Collectors.joining(" / ")))
                 .actors(douBanPage.getActor().stream().map(Person::getName).collect(Collectors.joining("\n" + "　　　")))
@@ -401,7 +401,12 @@ public class PtGenServiceImpl implements PtGenService {
             pageJson.putOpt("tags", new JSONArray(tagList));
         }
 
-        return JSONUtil.toBean(pageJson, DouBanPage.class);
+        DouBanPage page = JSONUtil.toBean(pageJson, DouBanPage.class);
+        // 如果被转换成了 PT 格式，则覆盖为原始字符串
+        if(infoMap != null && infoMap.get("durations") != null) {
+            page.setDuration(infoMap.get("durations"));
+        }
+        return page;
     }
 
     /**

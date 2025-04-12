@@ -20,7 +20,7 @@ CREATE TABLE `dou_ban`
     `dou_ban_rating_count` bigint        DEFAULT NULL COMMENT '豆瓣评分人数',
     `season`               varchar(30)   DEFAULT NULL COMMENT '季度',
     `episodes_count`       int           DEFAULT NULL COMMENT '集数',
-    `durations`            bigint        DEFAULT NULL COMMENT '单集片长',
+    `durations`            varchar(30)   DEFAULT NULL COMMENT '单集片长',
     `directors`            varchar(2048) DEFAULT NULL COMMENT '导演',
     `actors`               varchar(2048) DEFAULT NULL COMMENT '主演/演员',
     `dramatist`            varchar(2048) DEFAULT NULL COMMENT '编剧',

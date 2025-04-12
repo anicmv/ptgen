@@ -62,7 +62,7 @@ public class DouBan {
     // 集数
     private Integer episodesCount;
     // 单集片长
-    private Integer durations;
+    private String durations;
     // 导演
     private String directors;
     // 主演/演员
@@ -137,8 +137,8 @@ public class DouBan {
         if (ObjectUtil.isNotEmpty(episodesCount)) {
             ptGen.append("◎集　　数　").append(episodesCount).append("\n");
         }
-        if (ObjectUtil.isNotEmpty(durations) && durations.compareTo(0) > 0) {
-            ptGen.append("◎片　　长　").append(durations).append("分钟").append("\n");
+        if (ObjectUtil.isNotEmpty(durations)) {
+            ptGen.append("◎片　　长　").append(durations).append("\n");
         }
         if (StrUtil.isNotEmpty(directors)) {
             ptGen.append("◎导　　演　").append(directors).append("\n");
