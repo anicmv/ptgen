@@ -157,6 +157,16 @@ public class PtGenServiceImpl implements PtGenService {
         return PtGenUtil.success(douBanJson);
     }
 
+    @Override
+    public ResponseEntity<String> searchByKeyword(String keyword) {
+        String api = config.getSearchApi() + keyword;
+        String result = HttpUtil.get(api, Map.of(PtGenConstant.COOKIE, config.getCookie(), PtGenConstant.UA, PtGenConstant.USER_AGENT));
+        if (result == null) {
+            return null;
+        }
+        return ResponseEntity.ok().body(JSONUtil.parseArray(result).toStringPretty());
+    }
+
 
     /**
      * 获取返回数据

@@ -66,4 +66,14 @@ public class PtGenController {
             return PtGenUtil.error(e.getMessage());
         }
     }
+
+
+    @GetMapping("/search")
+    public ResponseEntity<String> search(@RequestParam String keyword) {
+        try {
+            return service.searchByKeyword(keyword);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

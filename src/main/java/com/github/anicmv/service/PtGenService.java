@@ -20,4 +20,6 @@ public interface PtGenService {
     ResponseEntity<JSONObject> save(DouBan douBan);
 
     ResponseEntity<JSONObject> cache(Integer douBanId);
+
+    ResponseEntity<String> searchByKeyword(String keyword);
 }

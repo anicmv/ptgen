@@ -17,6 +17,7 @@ mybatis-plus:
 
 douban:
   detailApi: api
+  searchApi: https://movie.douban.com/j/subject_suggest?q=
   apikey: api_key
   accessToken: your_token
   role: uploader
