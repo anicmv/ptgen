@@ -17,7 +17,6 @@ import lombok.extern.log4j.Log4j2;
 @Builder
 public class ResponseData {
     private DouBan douBan;
-    private DouBanPage douBanPage;
     private DouBanDetail douBanDetail;
     private String ptGen;
 

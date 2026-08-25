@@ -16,9 +16,9 @@
 
 ## 特点
 
-- 基于 Key 的分布式细粒度锁： 采用 ConcurrentHashMap 和 ReentrantLock 实现，该机制确保对于同一豆瓣 ID 的抓取操作仅在首次请求时执行，后续
+- 基于 Key 的分布式细粒度锁： 采用 ConcurrentHashMap 和 ReentrantLock 实现，该机制确保对于同一豆瓣 ID 的获取操作仅在首次请求时执行，后续
   30 天内均可复用数据；到期后再更新存量数据。
-- 降低豆瓣风控风险： 利用 MySQL 中存量数据一键生成 PT Gen 信息，有效减少直接抓取豆瓣页面的频率，从而降低风控触发的可能性。
+- 降低豆瓣风控风险： 利用 MySQL 中存量数据一键生成 PT Gen 信息，并通过豆瓣官方详情接口（frodo）获取数据而非抓取 HTML 页面，从而降低风控触发的可能性。
 - Token 认证： 利用 Spring Security 精细管理接口访问权限，确保安全可靠的接口访问控制。
 
 ## 开始使用
@@ -49,25 +49,21 @@ GET /ptgen?douban=36837352
 ◎年　　代　2025
 ◎产　　地　日本 / 韩国
 ◎类　　型　剧情 / 动作 / 动画 / 奇幻 / 冒险
-◎官方网站　https://sololeveling-anime.net
 ◎语　　言　日语
 ◎上映日期　2025-01-04(日本)
-◎IMDb评分　9.1 from 10418 users
-◎IMDb链接　https://www.imdb.com/title/tt31960864/
 ◎豆瓣评分　8.8 from 8628 users
 ◎豆瓣链接　https://movie.douban.com/subject/36837352/
 ◎集　　数　13
 ◎片　　长　24分钟
-◎导　　演　中重俊祐 Nakashige Shunsuke
-◎编　　剧　秋空 Chugong
-◎主　　演　坂泰斗 Ban Taito
-　　　上田丽奈 Reina Ueda
-　　　平川大辅 Daisuke Hirakawa
-　　　东地宏树 Hiroki Touchi
-　　　银河万丈 Banjô Ginga
-　　　古川慎 Makoto Furukawa
-　　　中村源太 Nakamura Genta
-　　　三川华月 Mikawa Haruna
+◎导　　演　中重俊祐
+◎主　　演　坂泰斗
+　　　上田丽奈
+　　　平川大辅
+　　　东地宏树
+　　　银河万丈
+　　　古川慎
+　　　中村源太
+　　　三川华月
 
 ◎简　　介
 
@@ -78,7 +74,7 @@ GET /ptgen?douban=36837352
 ### 豆瓣详情信息接口
 
 接口地址: `GET /detail?douban={豆瓣url或者id}`   
-接口描述: 返回PT Gen字符串  
+接口描述: 返回豆瓣结构化数据（JSON）  
 **请求头 (Headers)**
 
 | 参数            | 必须 | 示例                  | 说明       |
@@ -103,110 +99,17 @@ GET /detail?douban=36837352
         "translatedName": "我独自升级 第二季 -起于暗影- / 我独自升级：暗影崛起 / 我独自升级 第二季 -Arise from the Shadow- / 나 혼자만 레벨업 Season 2 / Solo Leveling Season 2 / Solo Leveling: Arise From the Shadow",
         "year": 2025,
         "countries": "日本 / 韩国",
-        "officialWebsite": "https://sololeveling-anime.net",
         "mainPic": "https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2917604260.jpg",
-        "genres": "剧情 / 动作 / 动画 / 奇幻 / 冒险",
+        "genres": "剧情 / 动作 / 动画",
         "languages": "日语",
         "publishDate": "2025-01-04(日本)",
-        "imdbRating": 9.1,
-        "imdbRatingCount": 10400,
-        "imdbId": "tt31960864",
         "douBanRating": 8.8,
         "douBanRatingCount": 8634,
         "episodesCount": 13,
         "durations": "24分钟",
-        "directors": "中重俊祐 Nakashige Shunsuke",
-        "actors": "坂泰斗 Ban Taito\n　　　上田丽奈 Reina Ueda\n　　　平川大辅 Daisuke Hirakawa\n　　　东地宏树 Hiroki Touchi\n　　　银河万丈 Banjô Ginga\n　　　古川慎 Makoto Furukawa\n　　　中村源太 Nakamura Genta\n　　　三川华月 Mikawa Haruna",
-        "dramatist": "秋空 Chugong",
-        "intro": "自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化。然而，被称作是人类最弱兵器的程肖宇，在一次双重地下城的突击任务中得到了只有自己能够「升级」的能力，得以在战斗中不断变强。顺利通过转职任务，得到能操纵暗影士兵的职业「暗影君主」的肖宇，为了取得或许能医治母亲病情的道具「生命神水」的素材，而投身于新的战斗之中。",
-        "awards": "{}"
-    },
-    "douBanPage": {
-        "context": "http://schema.org",
-        "name": "我独自升级 第二季 -起于暗影- 俺だけレベルアップな件 Season 2 -Arise from the Shadow-",
-        "imdb": "tt31960864",
-        "genres": "剧情 / 动作 / 动画 / 奇幻 / 冒险",
-        "url": "/subject/36837352/",
-        "image": "https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2917604260.jpg",
-        "languages": "日语",
-        "episodesCount": 13,
-        "officialWebsite": "https://sololeveling-anime.net",
-        "firstBroadcast": "2025-01-04(日本)",
-        "countries": "日本 / 韩国",
-        "director": [
-            {
-                "type": "Person",
-                "url": "/celebrity/1509565/",
-                "name": "中重俊祐 Nakashige Shunsuke"
-            }
-        ],
-        "author": [
-            {
-                "type": "Person",
-                "url": "/celebrity/1523080/",
-                "name": "秋空 Chugong"
-            }
-        ],
-        "actor": [
-            {
-                "type": "Person",
-                "url": "/celebrity/1397449/",
-                "name": "坂泰斗 Ban Taito"
-            },
-            {
-                "type": "Person",
-                "url": "/celebrity/1351541/",
-                "name": "上田丽奈 Reina Ueda"
-            },
-            {
-                "type": "Person",
-                "url": "/celebrity/1020547/",
-                "name": "平川大辅 Daisuke Hirakawa"
-            },
-            {
-                "type": "Person",
-                "url": "/celebrity/1177363/",
-                "name": "东地宏树 Hiroki Touchi"
-            },
-            {
-                "type": "Person",
-                "url": "/celebrity/1042350/",
-                "name": "银河万丈 Banjô Ginga"
-            },
-            {
-                "type": "Person",
-                "url": "/celebrity/1348459/",
-                "name": "古川慎 Makoto Furukawa"
-            },
-            {
-                "type": "Person",
-                "url": "/celebrity/1446052/",
-                "name": "中村源太 Nakamura Genta"
-            },
-            {
-                "type": "Person",
-                "url": "/celebrity/1474240/",
-                "name": "三川华月 Mikawa Haruna"
-            }
-        ],
-        "datePublished": "2025-01-04",
-        "genre": [
-            "剧情",
-            "动作",
-            "动画",
-            "奇幻",
-            "冒险"
-        ],
-        "duration": "PT0H24M",
-        "description": "自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化...",
-        "type": "TVSeries",
-        "aggregateRating": {
-            "type": "AggregateRating",
-            "ratingCount": 8564,
-            "bestRating": 10,
-            "worstRating": 2,
-            "ratingValue": 8.8
-        }
+        "directors": "中重俊祐",
+        "actors": "坂泰斗\n　　　上田丽奈\n　　　平川大辅\n　　　东地宏树\n　　　银河万丈\n　　　古川慎\n　　　中村源太\n　　　三川华月",
+        "intro": "自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。……"
     },
     "douBanDetail": {
         "rating": {
@@ -570,9 +473,12 @@ GET /detail?douban=36837352
         "isDoubanIntro": false,
         "subjectCollections": []
     },
-    "ptGen": "[img]https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2917604260.jpg[/img]\n\n◎译　　名　我独自升级 第二季 -起于暗影- / 我独自升级：暗影崛起 / 我独自升级 第二季 -Arise from the Shadow- / 나 혼자만 레벨업 Season 2 / Solo Leveling Season 2 / Solo Leveling: Arise From the Shadow\n◎片　　名　俺だけレベルアップな件 Season 2 -Arise from the Shadow-\n◎年　　代　2025\n◎产　　地　日本 / 韩国\n◎类　　型　剧情 / 动作 / 动画 / 奇幻 / 冒险\n◎官方网站　https://sololeveling-anime.net\n◎语　　言　日语\n◎上映日期　2025-01-04(日本)\n◎IMDb评分　9.1 from 10400 users\n◎IMDb链接　https://www.imdb.com/title/tt31960864/\n◎豆瓣评分　8.8 from 8634 users\n◎豆瓣链接　https://movie.douban.com/subject/36837352/\n◎集　　数　13\n◎片　　长　24分钟\n◎导　　演　中重俊祐 Nakashige Shunsuke\n◎编　　剧　秋空 Chugong\n◎主　　演　坂泰斗 Ban Taito\n　　　上田丽奈 Reina Ueda\n　　　平川大辅 Daisuke Hirakawa\n　　　东地宏树 Hiroki Touchi\n　　　银河万丈 Banjô Ginga\n　　　古川慎 Makoto Furukawa\n　　　中村源太 Nakamura Genta\n　　　三川华月 Mikawa Haruna\n\n◎简　　介\n\n　　自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化。然而，被称作是人类最弱兵器的程肖宇，在一次双重地下城的突击任务中得到了只有自己能够「升级」的能力，得以在战斗中不断变强。顺利通过转职任务，得到能操纵暗影士兵的职业「暗影君主」的肖宇，为了取得或许能医治母亲病情的道具「生命神水」的素材，而投身于新的战斗之中。\n"
+    "ptGen": "[img]https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2917604260.jpg[/img]\n\n◎译　　名　我独自升级 第二季 -起于暗影- / 我独自升级：暗影崛起 / 我独自升级 第二季 -Arise from the Shadow- / 나 혼자만 레벨업 Season 2 / Solo Leveling Season 2 / Solo Leveling: Arise From the Shadow\n◎片　　名　俺だけレベルアップな件 Season 2 -Arise from the Shadow-\n◎年　　代　2025\n◎产　　地　日本 / 韩国\n◎类　　型　剧情 / 动作 / 动画 / 奇幻 / 冒险\n◎语　　言　日语\n◎上映日期　2025-01-04(日本)\n◎豆瓣评分　8.8 from 8634 users\n◎豆瓣链接　https://movie.douban.com/subject/36837352/\n◎集　　数　13\n◎片　　长　24分钟\n◎导　　演　中重俊祐\n◎主　　演　坂泰斗\n　　　上田丽奈\n　　　平川大辅\n　　　东地宏树\n　　　银河万丈\n　　　古川慎\n　　　中村源太\n　　　三川华月\n\n◎简　　介\n\n　　自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化。然而，被称作是人类最弱兵器的程肖宇，在一次双重地下城的突击任务中得到了只有自己能够「升级」的能力，得以在战斗中不断变强。顺利通过转职任务，得到能操纵暗影士兵的职业「暗影君主」的肖宇，为了取得或许能医治母亲病情的道具「生命神水」的素材，而投身于新的战斗之中。\n"
 }
 ```
+
+
+> 说明：页面爬取与 IMDb 均已移除，`/detail` 不再返回 `douBanPage`；`douBan` 中也不再包含 `officialWebsite`、`season`、`dramatist`、`tags`、`awards`、`imdbRating`、`imdbRatingCount`、`imdbId` 等字段。`douBanDetail` 为 frodo.douban.com 详情接口的原始返回。
 
 ### 直接从存量数据库生成PT Gen信息
 
@@ -600,25 +506,21 @@ GET /old?douban=36837352
 ◎年　　代　2025
 ◎产　　地　日本 / 韩国
 ◎类　　型　剧情 / 动作 / 动画 / 奇幻 / 冒险
-◎官方网站　https://sololeveling-anime.net
 ◎语　　言　日语
 ◎上映日期　2025-01-04(日本)
-◎IMDb评分　9.1 from 10418 users
-◎IMDb链接　https://www.imdb.com/title/tt31960864/
 ◎豆瓣评分　8.8 from 8628 users
 ◎豆瓣链接　https://movie.douban.com/subject/36837352/
 ◎集　　数　13
 ◎片　　长　24分钟
-◎导　　演　中重俊祐 Nakashige Shunsuke
-◎编　　剧　秋空 Chugong
-◎主　　演　坂泰斗 Ban Taito
-　　　上田丽奈 Reina Ueda
-　　　平川大辅 Daisuke Hirakawa
-　　　东地宏树 Hiroki Touchi
-　　　银河万丈 Banjô Ginga
-　　　古川慎 Makoto Furukawa
-　　　中村源太 Nakamura Genta
-　　　三川华月 Mikawa Haruna
+◎导　　演　中重俊祐
+◎主　　演　坂泰斗
+　　　上田丽奈
+　　　平川大辅
+　　　东地宏树
+　　　银河万丈
+　　　古川慎
+　　　中村源太
+　　　三川华月
 
 ◎简　　介
 
@@ -663,23 +565,17 @@ POST /save
         "translatedName": "我独自升级 第二季 -起于暗影- / 我独自升级：暗影崛起 / 我独自升级 第二季 -Arise from the Shadow- / 나 혼자만 레벨업 Season 2 / Solo Leveling Season 2 / Solo Leveling: Arise From the Shadow",
         "year": 2025,
         "countries": "日本 / 韩国",
-        "officialWebsite": "https://sololeveling-anime.net",
         "mainPic": "https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2917604260.jpg",
         "genres": "剧情 / 动作 / 动画 / 奇幻 / 冒险",
         "languages": "日语",
         "publishDate": "2025-01-04(日本)",
-        "imdbRating": 9.1,
-        "imdbRatingCount": 10400,
-        "imdbId": "tt31960864",
         "douBanRating": 8.8,
         "douBanRatingCount": 8645,
         "episodesCount": 13,
         "durations": "24分钟",
-        "directors": "中重俊祐 Nakashige Shunsuke",
-        "actors": "坂泰斗 Ban Taito\n　　　上田丽奈 Reina Ueda\n　　　平川大辅 Daisuke Hirakawa\n　　　东地宏树 Hiroki Touchi\n　　　银河万丈 Banjô Ginga\n　　　古川慎 Makoto Furukawa\n　　　中村源太 Nakamura Genta\n　　　三川华月 Mikawa Haruna",
-        "dramatist": "秋空 Chugong",
+        "directors": "中重俊祐",
+        "actors": "坂泰斗\n　　　上田丽奈\n　　　平川大辅\n　　　东地宏树\n　　　银河万丈\n　　　古川慎\n　　　中村源太\n　　　三川华月",
         "intro": "自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化。然而，被称作是人类最弱兵器的程肖宇，在一次双重地下城的突击任务中得到了只有自己能够「升级」的能力，得以在战斗中不断变强。顺利通过转职任务，得到能操纵暗影士兵的职业「暗影君主」的肖宇，为了取得或许能医治母亲病情的道具「生命神水」的素材，而投身于新的战斗之中。",
-        "awards": "{}",
         "createTime": 1743232522000,
         "updateTime": 1743233768000
     }
@@ -719,7 +615,7 @@ GET /cache?douban=36837352
 {
     "result": "success",
     "code": 200,
-    "data": "[img]https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2917604260.jpg[/img]\n\n◎译　　名　我独自升级 第二季 -起于暗影- / 我独自升级：暗影崛起 / 我独自升级 第二季 -Arise from the Shadow- / 나 혼자만 레벨업 Season 2 / Solo Leveling Season 2 / Solo Leveling: Arise From the Shadow\n◎片　　名　俺だけレベルアップな件 Season 2 -Arise from the Shadow-\n◎年　　代　2025\n◎产　　地　日本 / 韩国\n◎类　　型　剧情 / 动作 / 动画 / 奇幻 / 冒险\n◎官方网站　https://sololeveling-anime.net\n◎语　　言　日语\n◎上映日期　2025-01-04(日本)\n◎豆瓣评分　8.8 from 7916 users\n◎豆瓣链接　https://movie.douban.com/subject/36837352/\n◎集　　数　13\n◎片　　长　24分钟\n◎导　　演　中重俊祐 Nakashige Shunsuke\n◎编　　剧　秋空 Chugong\n◎主　　演　坂泰斗 Ban Taito\n　　　上田丽奈 Reina Ueda\n　　　平川大辅 Daisuke Hirakawa\n　　　东地宏树 Hiroki Touchi\n　　　银河万丈 Banjô Ginga\n　　　古川慎 Makoto Furukawa\n　　　中村源太 Nakamura Genta\n　　　三川华月 Mikawa Haruna\n\n◎简　　介\n\n　　自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化。然而，被称作是人类最弱兵器的程肖宇，在一次双重地下城的突击任务中得到了只有自己能够「升级」的能力，得以在战斗中不断变强。顺利通过转职任务，得到能操纵暗影士兵的职业「暗影君主」的肖宇，为了取得或许能医治母亲病情的道具「生命神水」的素材，而投身于新的战斗之中。\n"
+    "data": "[img]https://img1.doubanio.com/view/photo/m_ratio_poster/public/p2917604260.jpg[/img]\n\n◎译　　名　我独自升级 第二季 -起于暗影- / 我独自升级：暗影崛起 / 我独自升级 第二季 -Arise from the Shadow- / 나 혼자만 레벨업 Season 2 / Solo Leveling Season 2 / Solo Leveling: Arise From the Shadow\n◎片　　名　俺だけレベルアップな件 Season 2 -Arise from the Shadow-\n◎年　　代　2025\n◎产　　地　日本 / 韩国\n◎类　　型　剧情 / 动作 / 动画 / 奇幻 / 冒险\n◎语　　言　日语\n◎上映日期　2025-01-04(日本)\n◎豆瓣评分　8.8 from 7916 users\n◎豆瓣链接　https://movie.douban.com/subject/36837352/\n◎集　　数　13\n◎片　　长　24分钟\n◎导　　演　中重俊祐\n◎主　　演　坂泰斗\n　　　上田丽奈\n　　　平川大辅\n　　　东地宏树\n　　　银河万丈\n　　　古川慎\n　　　中村源太\n　　　三川华月\n\n◎简　　介\n\n　　自世界各地出现连接异次元与现实世界的通路「传送门」，已过了十多年。觉醒了特殊能力，被称为「猎人」的人们，与存在于传送门里地下城内的魔兽不断厮杀。猎人的能力在觉醒后就不再有成长空间，其等级也不会再有变化。然而，被称作是人类最弱兵器的程肖宇，在一次双重地下城的突击任务中得到了只有自己能够「升级」的能力，得以在战斗中不断变强。顺利通过转职任务，得到能操纵暗影士兵的职业「暗影君主」的肖宇，为了取得或许能医治母亲病情的道具「生命神水」的素材，而投身于新的战斗之中。\n"
 }
 ```
 

@@ -1,8 +1,6 @@
 package com.github.anicmv.service.impl;
 
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.github.anicmv.config.DouBanConfig;
@@ -15,10 +13,6 @@ import com.github.anicmv.util.HttpUtil;
 import com.github.anicmv.util.PtGenUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -127,8 +121,6 @@ public class PtGenServiceImpl implements PtGenService {
         if (douBan.getId() == null) {
             return PtGenUtil.error("豆瓣: null");
         }
-        // 转换获奖情况
-        PtGenUtil.convertAwards(douBan);
         mapper.insertOrUpdate(douBan);
         return PtGenUtil.success();
     }
@@ -175,50 +167,15 @@ public class PtGenServiceImpl implements PtGenService {
      * @param exist    是否存在
      */
     private ResponseData getData(Integer douBanId, Boolean exist) {
-        DouBanPage douBanPage = getPageObj(douBanId);
-        if (douBanPage == null) {
-            return null;
-        }
-
-        String type = "TVSeries".equals(douBanPage.getType()) ? "tv" : "movie";
-        // 信息接口
-        DouBanDetail detail = getMovieDetail(douBanId, type);
-
+        DouBanDetail detail = getMovieDetail(douBanId);
         if (detail == null) {
             return null;
         }
 
-        // 拿获奖名单
-        Map<String, List<String>> awards = getAwards(douBanId);
-
-        // imdb信息
-        IMDbData imdb = getImdb(douBanPage.getImdb());
-
-        // 豆瓣信息
-        DouBan douBan = getDouBan(douBanId, douBanPage, detail, awards, imdb);
+        DouBan douBan = getDouBan(douBanId, detail);
         updateDouBan(douBan, exist);
 
-        return ResponseData.builder().douBan(douBan).douBanDetail(detail).douBanPage(douBanPage).build().buildPtGen();
-    }
-
-
-    /**
-     * 获取imdb信息
-     *
-     * @param imdbId id
-     * @return IMDbData
-     */
-    private IMDbData getImdb(String imdbId) {
-        String imdbUrl = PtGenConstant.IMDB_F + imdbId + PtGenConstant.IMDB_L;
-        String imdbJsonStr = HttpUtil.getImdbJson(imdbUrl, Map.of(PtGenConstant.UA, PtGenConstant.USER_AGENT, PtGenConstant.AE, PtGenConstant.ACCEPT_ENCODING));
-        if (StrUtil.isEmpty(imdbJsonStr)) {
-            return IMDbData.builder().build();
-        }
-        JSONObject imdbJson = PtGenUtil.jsonpParser(imdbJsonStr);
-        if (imdbJson.get("resource") == null) {
-            return IMDbData.builder().build();
-        }
-        return JSONUtil.toBean(imdbJson.getJSONObject("resource"), IMDbData.class);
+        return ResponseData.builder().douBan(douBan).douBanDetail(detail).build().buildPtGen();
     }
 
 
@@ -238,28 +195,20 @@ public class PtGenServiceImpl implements PtGenService {
     }
 
     /**
-     * 获取 豆瓣页面数据
+     * 获取api数据。页面爬取已移除，无法再从页面判断 movie/tv，故先按 movie 请求，失败再按 tv 请求
      *
      * @param douBanId 豆瓣id
      */
-    private DouBanPage getPageObj(Integer douBanId) {
-        String douBanLink = PtGenConstant.D_LINK + douBanId + PtGenConstant.S;
-        String pageRaw = HttpUtil.get(douBanLink, Map.of(PtGenConstant.COOKIE, config.getCookie(), PtGenConstant.UA, PtGenConstant.USER_AGENT));
-
-        if (checkPageError(pageRaw)) {
-            return null;
+    private DouBanDetail getMovieDetail(Integer douBanId) {
+        DouBanDetail detail = fetchDetail(douBanId, "movie");
+        if (detail == null || StrUtil.isEmpty(detail.getTitle())) {
+            log.info("movie 接口未获取到数据，尝试 tv 接口 douBanId: {}", douBanId);
+            detail = fetchDetail(douBanId, "tv");
         }
-
-        return getPageScriptJson(pageRaw, douBanLink);
+        return detail;
     }
 
-    /**
-     * 获取api数据
-     *
-     * @param douBanId 豆瓣info
-     * @param type     movie or tv
-     */
-    private DouBanDetail getMovieDetail(Integer douBanId, String type) {
+    private DouBanDetail fetchDetail(Integer douBanId, String type) {
         String api = config.getDetailApi() + type + PtGenConstant.S + douBanId + PtGenConstant.API_KEY + config.getApikey();
         String result = HttpUtil.get(api, Map.of(PtGenConstant.UA, config.getUserAgent(), PtGenConstant.REFERER, config.getReferer()));
         if (result == null) {
@@ -272,226 +221,49 @@ public class PtGenServiceImpl implements PtGenService {
     /**
      * 构建豆瓣对象
      *
-     * @param douBanId   豆瓣id
-     * @param douBanPage 豆瓣页面数据
-     * @param detail     豆瓣api数据
-     * @param awards     奖杯页面信息
-     * @param imdb       imdb
+     * @param douBanId 豆瓣id
+     * @param detail   豆瓣api数据
      * @return 豆瓣
      */
-    private DouBan getDouBan(Integer douBanId, DouBanPage douBanPage, DouBanDetail detail, Map<String, List<String>> awards, IMDbData imdb) {
-        // 构建豆瓣对象
+    private DouBan getDouBan(Integer douBanId, DouBanDetail detail) {
+        String akaStr = detail.getAka() == null ? "" : String.join(" / ", detail.getAka());
+        String originalTitle = StrUtil.isEmpty(detail.getOriginalTitle()) ? detail.getTitle() : detail.getOriginalTitle();
+        String translatedName = StrUtil.isEmpty(detail.getOriginalTitle()) ? akaStr : detail.getTitle() + " / " + akaStr;
+
         return DouBan.builder()
                 .id(douBanId)
                 .title(detail.getTitle())
-                .type(douBanPage.getType())
-                .originalTitle(StrUtil.isEmpty(detail.getOriginalTitle()) ? detail.getTitle() : detail.getOriginalTitle())
-                .translatedName(StrUtil.isEmpty(detail.getOriginalTitle()) ? String.join(" / ", detail.getAka()) : detail.getTitle() + " / " + String.join(" / ", detail.getAka()))
+                .type("tv".equalsIgnoreCase(detail.getType()) ? "TVSeries" : "Movie")
+                .originalTitle(originalTitle)
+                .translatedName(translatedName)
                 .year(Integer.parseInt(detail.getYear()))
-                .countries(douBanPage.getCountries())
-                .officialWebsite(douBanPage.getOfficialWebsite())
-                .mainPic(detail.getPic().getLarge())
-                .genres(douBanPage.getGenres())
-                .languages(douBanPage.getLanguages())
-                .publishDate(String.join(" / ", detail.getPubdate()))
-                .douBanRating(BigDecimal.valueOf(detail.getRating().getValue()))
-                .douBanRatingCount(detail.getRating().getCount())
-                .imdbId(douBanPage.getImdb()).season(douBanPage.getSeason())
-                .imdbRating(imdb.getRating() == null ? BigDecimal.ZERO : imdb.getRating())
-                .imdbRatingCount(imdb.getRatingCount())
-                .episodesCount(douBanPage.getEpisodesCount())
-                .durations(douBanPage.getDuration())
-                .directors(douBanPage.getDirector()
-                        .stream().map(Person::getName).collect(Collectors.joining(" / ")))
-                .actors(douBanPage.getActor().stream().map(Person::getName).collect(Collectors.joining("\n" + "　　　　　 ")))
-                .dramatist(douBanPage.getAuthor().stream().map(Person::getName).collect(Collectors.joining(" / ")))
-                .tags(douBanPage.getTags())
-                .intro(detail.getIntro()).awards(JSONUtil.parseObj(awards).toString())
+                .countries(join(detail.getCountries()))
+                .mainPic(detail.getPic() == null ? null : detail.getPic().getLarge())
+                .genres(join(detail.getGenres()))
+                .languages(join(detail.getLanguages()))
+                .publishDate(join(detail.getPubdate()))
+                .douBanRating(detail.getRating() == null ? null : BigDecimal.valueOf(detail.getRating().getValue()))
+                .douBanRatingCount(detail.getRating() == null ? null : detail.getRating().getCount())
+                .episodesCount(detail.getEpisodesCount() > 0 ? detail.getEpisodesCount() : null)
+                .durations(join(detail.getDurations()))
+                .directors(joinNames(detail.getDirectors()))
+                .actors(joinNames(detail.getActors(), "\n" + "　　　　　 "))
+                .intro(detail.getIntro())
                 .build();
     }
 
+    private static String join(List<String> list) {
+        return list == null || list.isEmpty() ? null : String.join(" / ", list);
+    }
 
-    /**
-     * 获取奖杯信息页面数据
-     *
-     * @param douBanId 豆瓣id
-     */
-    private Map<String, List<String>> getAwards(Integer douBanId) {
-        String awardsPageUrl = PtGenConstant.D_LINK + douBanId + PtGenConstant.AWARDS;
-        String awardsPage = HttpUtil.get(awardsPageUrl, Map.of(PtGenConstant.COOKIE, config.getCookie()));
-        if (awardsPage == null) {
+    private static String joinNames(List<DouBanDetail.SimpleName> list) {
+        return joinNames(list, " / ");
+    }
+
+    private static String joinNames(List<DouBanDetail.SimpleName> list, String delimiter) {
+        if (list == null || list.isEmpty()) {
             return null;
         }
-        Document awardsDoc = Jsoup.parse(awardsPage, awardsPage);
-        Element awardsContent = awardsDoc.selectFirst("#content > div > div.article");
-        if (awardsContent == null) {
-            return null;
-        }
-        Elements awardsEle = awardsContent.select(".awards");
-
-        Map<String, List<String>> awardsMap = new LinkedHashMap<>();
-
-        awardsEle.forEach(awardEle -> {
-            Element h2 = awardEle.selectFirst("h2");
-            List<String> awards = new ArrayList<>();
-            if (h2 != null) {
-                awardsMap.put(h2.text(), awards);
-            }
-            Elements ae = awardEle.select(".award");
-            ae.forEach(a -> awards.add(a.text()));
-        });
-        return awardsMap;
+        return list.stream().map(DouBanDetail.SimpleName::getName).collect(Collectors.joining(delimiter));
     }
-
-
-    /**
-     * 检查错误页面
-     *
-     * @param pageRaw html
-     * @return true表示爬取错误
-     */
-    private boolean checkPageError(String pageRaw) {
-        if (StrUtil.isEmpty(pageRaw)) {
-            log.error("empty page");
-            return true;
-        }
-        if (pageRaw.contains("你想访问的页面不存在")) {
-            log.error("NONE_EXIST_ERROR");
-            return true;
-        } else if (pageRaw.contains("检测到有异常请求")) {
-            log.error("GenHelp was temporary banned by Douban, Please wait....");
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 获取page对象
-     *
-     * @param pageRaw    html
-     * @param douBanLink 豆瓣链接
-     * @return page
-     */
-    private DouBanPage getPageScriptJson(String pageRaw, String douBanLink) {
-        Document doc = Jsoup.parse(pageRaw, douBanLink);
-        Element ldElement = doc.selectFirst("head > script[type=application/ld+json]");
-        JSONObject pageJson = new JSONObject();
-        if (ldElement != null) {
-            String ldContent = ldElement.html().replaceAll("(\\r\\n|\\n|\\r|\\t)", "").replaceAll("@type", "type").replaceAll("@context", "context");
-            pageJson = new JSONObject(ldContent);
-        }
-
-        Map<String, String> infoMap = fetchInfoMap(doc);
-        if (infoMap != null) {
-            // imdb
-            pageJson.putOpt("imdb", infoMap.get("IMDb"));
-            // 季度
-            pageJson.putOpt("season", infoMap.get("season"));
-            // 类型
-            pageJson.putOpt("genres", infoMap.get("genres"));
-            // 上映日期
-            pageJson.putOpt("publishDate", infoMap.get("publishDate"));
-            // 官方网站
-            pageJson.putOpt("officialWebsite", infoMap.get("officialWebsite"));
-            // 集数
-            pageJson.putOpt("episodesCount", infoMap.get("episodesCount"));
-            // 单集片长
-            pageJson.putOpt("durations", infoMap.get("durations"));
-            // 首播
-            pageJson.putOpt("firstBroadcast", infoMap.get("firstBroadcast"));
-            // 制片国家/地区/产地
-            pageJson.putOpt("countries", infoMap.get("countries"));
-            // 语言
-            pageJson.putOpt("languages", infoMap.get("languages"));
-        }
-
-
-        // 标签
-        Elements tagEls = doc.select("div.tags-body > a[href^=/tag]");
-        if (!tagEls.isEmpty()) {
-            List<String> tagList = tagEls.eachText();
-            pageJson.putOpt("tags", new JSONArray(tagList));
-        }
-
-        DouBanPage page = JSONUtil.toBean(pageJson, DouBanPage.class);
-        // 如果被转换成了 PT 格式，则覆盖为原始字符串
-        if(infoMap != null && infoMap.get("durations") != null) {
-            page.setDuration(infoMap.get("durations"));
-        }
-        return page;
-    }
-
-    /**
-     * 获取 #info元素信息
-     *
-     * @param doc DouBan页面对象
-     */
-    private Map<String, String> fetchInfoMap(Document doc) {
-        Element infoEle = doc.select("#info").first();
-        if (infoEle == null) {
-            return null;
-        }
-
-        String info = infoEle.wholeText().replaceAll("\n\n", "\n");
-        String[] infos = info.split("\n");
-
-        Map<String, String> infoMap = new HashMap<>();
-        for (String str : infos) {
-            getInfoMap(str.trim().split(": "), infoMap);
-        }
-        return infoMap;
-    }
-
-    private static void getInfoMap(String[] partInfo, Map<String, String> infoMap) {
-        if (ObjectUtil.isEmpty(partInfo)) {
-            return;
-        }
-
-        switch (partInfo[0]) {
-            case "导演":
-                infoMap.put("directors", partInfo[1]);
-                break;
-            case "编剧":
-                infoMap.put("dramatist", partInfo[1]);
-                break;
-            case "主演":
-                infoMap.put("actors", partInfo[1]);
-                break;
-            case "类型":
-                infoMap.put("genres", partInfo[1]);
-                break;
-            case "官方网站":
-                infoMap.put("officialWebsite", partInfo[1]);
-                break;
-            case "制片国家/地区":
-                infoMap.put("countries", partInfo[1]);
-                break;
-            case "语言":
-                infoMap.put("languages", partInfo[1]);
-                break;
-            case "首播":
-                infoMap.put("firstBroadcast", partInfo[1]);
-                break;
-            case "上映日期":
-                infoMap.put("publishDate", partInfo[1]);
-                break;
-            case "季度":
-                infoMap.put("season", partInfo[1]);
-                break;
-            case "集数":
-                infoMap.put("episodesCount", partInfo[1]);
-                break;
-            case "单集片长", "片长":
-                infoMap.put("durations", partInfo[1]);
-                break;
-            case "又名":
-                infoMap.put("otherName", partInfo[1]);
-                break;
-            case "IMDb":
-                infoMap.put("IMDb", partInfo[1]);
-                break;
-        }
-    }
-
-
 }
